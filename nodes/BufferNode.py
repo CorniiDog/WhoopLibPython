@@ -88,7 +88,9 @@ class BufferSystem:
             try:
                 port = self.find_vex_robotics_port()
                 if not port:
-                    print("V5 Brain Disconnected")
+                    if not self.errorRunOnce:
+                        self.errorRunOnce = True
+                        print("V5 Brain Disconnected")
                     return 1
                 if self.ser:
                     if self.ser.isOpen():
@@ -140,9 +142,11 @@ class BufferSystem:
         
         if self.debugMode:
             run()
+            self.errorRunOnce = False
         else:
             try:
                 run()
+                self.errorRunOnce = False
             except Exception as e:
                 if reconnect() != 0:
                     if not self.errorRunOnce:
