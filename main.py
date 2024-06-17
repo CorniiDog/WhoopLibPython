@@ -39,7 +39,6 @@ def main():
     # This allows instantenous sending as soon as data is received, therefore reducing delay
     t265_pose.register_offset_transform_stream(offsetTransform=robot_pose, messenger=pose_messenger, max_decimals=3)
 
-
     # Object node
     # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
     #vision = visionNode.VisionSystem(d43i_pose, version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
