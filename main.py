@@ -34,6 +34,12 @@ def main():
     # The camera is perfectly centered on the front of the robot, so px doesn't need to be changed, and neither does the rx, ry, rz, and rw values for rotation.
     # The center of mass of the robot is about 196 millimeters behind the camera, so we set pz to 196/1000 to convert to meters.
     robot_pose = offsetCalculator.OffsetTransform(t265_pose, px=0, py=-150/1000, pz=196/1000)
+
+    # Register the t265_pose to send robot_pose over the pose_messenger stream whenever the t265_pose updates
+    # This allows instantenous sending as soon as data is received, therefore reducing delay
+    t265_pose.register_offset_transform_stream(offsetTransform=robot_pose, messenger=pose_messenger, max_decimals=3)
+
+
     # Object node
     # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
     #vision = visionNode.VisionSystem(d43i_pose, version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
@@ -41,10 +47,6 @@ def main():
 
     toolbox.reset_realsense_devices()
     manager.start()
-
-    # Register the t265_pose to send robot_pose over the pose_messenger stream whenever the t265_pose updates
-    # This allows instantenous sending as soon as data is received, therefore reducing delay
-    t265_pose.register_offset_transform_stream(offsetTransform=robot_pose, messenger=pose_messenger, max_decimals=3)
 
     try:
         print("Running")

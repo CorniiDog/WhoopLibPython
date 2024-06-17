@@ -81,33 +81,32 @@ class BufferSystem:
             time.sleep(0.1)
             if t >= max_initialization_time:
                 break
+    
+    def reconnect(self):
+        try:
+            port = self.find_vex_robotics_port()
+            if not port:
+                if not self.errorRunOnce:
+                    self.errorRunOnce = True
+                    print("V5 Brain Disconnected")
+                return 1
+            if self.ser:
+                if self.ser.isOpen():
+                    self.ser.close()  # Ensure the connection is closed before reopening
+                self.ser = None  # Reset the serial object
+            self.port = port
+            self.ser = serial.Serial(self.port, self.rate, timeout=1)
+            return 0
+        except serial.SerialException as e:
+            print("Error attempting to reconnect:", e)
+            return 1
 
     def __step(self):
-        
-        def reconnect():
-            try:
-                port = self.find_vex_robotics_port()
-                if not port:
-                    if not self.errorRunOnce:
-                        self.errorRunOnce = True
-                        print("V5 Brain Disconnected")
-                    return 1
-                if self.ser:
-                    if self.ser.isOpen():
-                        self.ser.close()  # Ensure the connection is closed before reopening
-                    self.ser = None  # Reset the serial object
-                self.port = port
-                self.ser = serial.Serial(self.port, self.rate, timeout=1)
-                return 0
-            except serial.SerialException as e:
-                print("Error attempting to reconnect:", e)
-                return 1
-        
 
         def run():
             try:
                 if not self.ser: # Initialize
-                    if reconnect() != 0:
+                    if self.reconnect() != 0:
                         if not self.errorRunOnce:
                             self.errorRunOnce = True
                             print("Reconnect error, trying again")
@@ -132,7 +131,7 @@ class BufferSystem:
                                     self.messages[stream_name] = latest_msg.strip()
             except serial.SerialException as e:
                 print("Serial communication error:", e)
-                if reconnect() != 0:
+                if self.reconnect() != 0:
                     if not self.errorRunOnce:
                             self.errorRunOnce = True
                             print("Reconnect error, trying again")
@@ -148,7 +147,7 @@ class BufferSystem:
                 run()
                 self.errorRunOnce = False
             except Exception as e:
-                if reconnect() != 0:
+                if self.reconnect() != 0:
                     if not self.errorRunOnce:
                             self.errorRunOnce = True
                             print("Reconnect error, trying again")
@@ -174,12 +173,13 @@ class BufferSystem:
         Retreives message from robot, as a string, from the stream.
         """
         if stream in self.messages:
-            if delete_after_read:
-                message = self.messages[stream]
-                del self.messages[stream]
-                return message
+            with self.lock:
+                if delete_after_read:
+                    message = self.messages[stream]
+                    del self.messages[stream]
+                    return message
 
-            return self.messages[stream]
+                return self.messages[stream]
         else:
             return None
         
@@ -188,10 +188,11 @@ class BufferSystem:
         Sends a message to the dedicated stream
         """
         def send():
-            if not self.ser:
-                try:
-                    self.ser = serial.Serial(self.port, self.rate)
-                except:
+            if not self.ser: # Initialize
+                if self.reconnect() != 0:
+                    if not self.errorRunOnce:
+                        self.errorRunOnce = True
+                        print("Reconnect error")
                     return
 
             box = f"[<{stream}>]{message}&={stream}*${end}".encode('utf-8')
@@ -204,8 +205,13 @@ class BufferSystem:
         else:
             try:
                 send()
+                self.errorRunOnce = False
                 return True
             except:
+                if self.reconnect() != 0:
+                    if not self.errorRunOnce:
+                        self.errorRunOnce = True
+                        print("Reconnect error")
                 return False
         
 
