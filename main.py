@@ -15,7 +15,7 @@ def main():
     manager.add_compute_node(t265_pose)
     
     # Node for communication with V5 Brain
-    buffer_system = bufferNode.BufferSystem(max_buffer_size=512, port_search_name="VEX Robotics V5 Brain", rate=115200)
+    buffer_system = bufferNode.BufferSystem(max_buffer_size=256, port_search_name="VEX Robotics V5 Brain", rate=115200)
     manager.add_compute_node(buffer_system)
 
     # This is for retreiving the pose of the d435i camera as an offset of the T265 transformation (in meters)
@@ -26,12 +26,14 @@ def main():
     # Image of the transformation origins: https://files.readme.io/29080d9-Tracking_Depth_fixture_image.png
     d43i_pose = offsetCalculator.OffsetTransform(t265_pose, px=-16/1000, py=36.40/1000, pz=-4/1000) 
 
+    # This is the pose messenger system for the V5 Brain
+    pose_messenger = bufferNode.Messenger(buffer_system, "P")
+    
     # This is the pose of the robot. Same rules apply. It is relative to the pose of the T265 camera
     # The center bottom of the robot is 150 millimeters below camera (since the camera is obviously higher than the bottom of the robot)
     # The camera is perfectly centered on the front of the robot, so px doesn't need to be changed, and neither does the rx, ry, rz, and rw values for rotation.
     # The center of mass of the robot is about 196 millimeters behind the camera, so we set pz to 196/1000 to convert to meters.
-    robot_pose = offsetCalculator.OffsetTransform(t265_pose, px=0, py=-150/1000, pz=196/1000) 
-
+    robot_pose = offsetCalculator.OffsetTransform(t265_pose, px=0, py=-150/1000, pz=196/1000)
     # Object node
     # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
     #vision = visionNode.VisionSystem(d43i_pose, version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
@@ -40,22 +42,24 @@ def main():
     toolbox.reset_realsense_devices()
     manager.start()
 
-    pose_messenger = bufferNode.Messenger(buffer_system, "Pose")
+    # Register the pose messenger to send robot_pose over the pose_messenger stream whenever the t265_pose updates
+    # This allows instantenous sending as soon as data is received, therefore reducing delay
+    t265_pose.register_offset_transform_stream(offsetTransform=robot_pose, messenger=pose_messenger, max_decimals=3)
 
     try:
         print("Running")
         while True:
 
+            """
             # Pose of robot
             robot_pose_euler = robot_pose.get_position_and_euler()
-            pose_messenger.send_euler(robot_pose_euler, max_decimals=2)
 
             # Printing the x y z pitch yaw roll of the robot
-            
             position, rotation = robot_pose_euler["position"], robot_pose_euler["euler_angles"]
             x, y, z = position[0], position[1], position[2]
             pitch, yaw, roll = rotation[0], rotation[1], rotation[2]
-
+            """
+            
             """
             print()
             print("[Robot Pose]")

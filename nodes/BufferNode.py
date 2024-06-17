@@ -26,6 +26,7 @@ class BufferSystem:
         self.ser = None
         self.debugMode= debugMode
         self.port_search_name = port_search_name
+        self.errorRunOnce = False
 
     def find_vex_robotics_port(self):
         ports = list(serial.tools.list_ports.comports())
@@ -105,7 +106,9 @@ class BufferSystem:
             try:
                 if not self.ser: # Initialize
                     if reconnect() != 0:
-                        print("Reconnect error, trying again")
+                        if not self.errorRunOnce:
+                            self.errorRunOnce = True
+                            print("Reconnect error, trying again")
                         time.sleep(0.5)
                         return
 
@@ -128,7 +131,9 @@ class BufferSystem:
             except serial.SerialException as e:
                 print("Serial communication error:", e)
                 if reconnect() != 0:
-                    print("Reconnect error, trying again")
+                    if not self.errorRunOnce:
+                            self.errorRunOnce = True
+                            print("Reconnect error, trying again")
                     time.sleep(0.5)
                     return
                 time.sleep(0.5)
@@ -140,7 +145,9 @@ class BufferSystem:
                 run()
             except Exception as e:
                 if reconnect() != 0:
-                    print("Reconnect error, trying again")
+                    if not self.errorRunOnce:
+                            self.errorRunOnce = True
+                            print("Reconnect error, trying again")
                     time.sleep(0.5)
                     return
                 print("Runtime Error:", e)

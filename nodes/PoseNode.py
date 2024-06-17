@@ -5,6 +5,8 @@ from functools import partial
 import threading
 import time
 from scipy.spatial.transform import Rotation as R
+import calculators.OffsetTransform as offsetCalculator
+import nodes.BufferNode as bufferNode
 import toolbox
 
 max_initialization_time = 3
@@ -33,6 +35,7 @@ class PoseSystem:
         self.lock = threading.Lock()
         self.running = False
         self.debugMode = debugMode
+        self.OffsetTransforms = []
 
     def start_pipeline(self, lock: threading.Lock = None):
         """
@@ -86,6 +89,9 @@ class PoseSystem:
         self.pipethread.join()
         self.pipeline.stop()
 
+    def register_offset_transform_stream(self, offsetTransform:offsetCalculator.OffsetTransform, messenger:bufferNode.Messenger, max_decimals=4):
+        self.OffsetTransforms.append([offsetTransform, messenger, max_decimals])
+
     def __step(self):
         """
         This steps the system and applies p, or a pose
@@ -103,6 +109,10 @@ class PoseSystem:
         # Lock and update variables
         with self.lock:
             self.p = p
+
+        for i in range(len(self.OffsetTransforms)):
+            pose_euler = self.OffsetTransforms[i][0].get_position_and_euler()
+            self.OffsetTransforms[i][1].send_euler(pose_euler, max_decimals=self.OffsetTransforms[i][2])
 
 
     def get_pose(self):
