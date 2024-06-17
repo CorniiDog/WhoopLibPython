@@ -36,6 +36,7 @@ class PoseSystem:
         self.running = False
         self.debugMode = debugMode
         self.OffsetTransforms = []
+        self.errorRunOnce = False
 
     def start_pipeline(self, lock: threading.Lock = None):
         """
@@ -60,8 +61,11 @@ class PoseSystem:
                 else:
                     try:
                         self.__step()
+                        self.errorRunOnce = False
                     except Exception as e:
-                        print(f"Thread Pose Estimation: Error occurred - {e}. Restarting thread.")
+                        if not self.errorRunOnce:
+                            self.errorRunOnce = True
+                            print(f"Thread Pose Estimation: Error occurred - {e}. Restarting thread.")
                         continue
                 if not self.first_pass:
                     self.first_pass = True
@@ -105,6 +109,10 @@ class PoseSystem:
             return
 
         pose = pose_frame.get_pose_data()
+
+        if not pose:
+            return
+        
         p = self.Pose(*map(partial(getattr, pose), attrs))
         # Lock and update variables
         with self.lock:

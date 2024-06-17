@@ -14,7 +14,7 @@ class BufferSystem:
         """
         max_buffer_size is the max number of characters to record. 500 is default.
         """
-        self.registered_streams = []
+        self.registered_messengers = []
         self.messages = {}
         self.buffer = ""
         self.lock = threading.Lock()
@@ -35,13 +35,15 @@ class BufferSystem:
                 return port.device
         return None
 
-    def register_stream(self, stream:str):
+    def register_stream(self, messenger):
         """
         This registers a stream (like "Arm" if the robot registers stream "Arm" too)
         """
-        if stream in self.registered_streams:
-            raise Exception(f"Stream {stream} is already registered. Configure a different name.")
-        self.registered_streams.append(stream)
+        for i in range(len(self.registered_messengers)):
+            msgr = self.registered_messengers[i]
+            if messenger.stream == msgr.stream:
+                raise Exception(f"Stream {messenger.stream} is already registered. Configure a different name.")
+        self.registered_messengers.append(messenger)
 
     def start_pipeline(self, lock: threading.Lock = None):
         """
@@ -86,9 +88,6 @@ class BufferSystem:
         try:
             port = self.find_vex_robotics_port()
             if not port:
-                if not self.errorRunOnce:
-                    self.errorRunOnce = True
-                    print("V5 Brain Disconnected")
                 return 1
             if self.ser:
                 if self.ser.isOpen():
@@ -124,11 +123,14 @@ class BufferSystem:
                             if len(self.buffer) > self.max_buffer_size:
                                 self.buffer = self.buffer[-self.max_buffer_size:]
                         
-                        for stream_name in self.registered_streams:
-                            latest_msg = toolbox.get_latest_message_from_buffer(self.buffer, "[<" + stream_name + ">]", "&=" + stream_name + "*$")
+                        for messenger in self.registered_messengers:
+                            latest_msg = toolbox.get_latest_message_from_buffer(self.buffer, "[<" + messenger.stream + ">]", "&=" + messenger.stream + "*$")
                             if latest_msg:
                                 with self.lock:
-                                    self.messages[stream_name] = latest_msg.strip()
+                                    self.messages[messenger.stream] = latest_msg.strip()
+                                for i in range(len(messenger.callback_functions)):
+                                    messenger.callback_functions[i](latest_msg.strip())
+
             except serial.SerialException as e:
                 print("Serial communication error:", e)
                 if self.reconnect() != 0:
@@ -224,6 +226,7 @@ class Messenger:
         self.bufferSystem = bufferSystem
         self.bufferSystem.register_stream(stream)
         self.deleteAfterRead = deleteAfterRead
+        self.callback_functions = []
 
     def send(self, message:str) -> bool:
         """
@@ -264,6 +267,9 @@ class Messenger:
         
         return {"position": [float(sub_messages[0]), float(sub_messages[1]), float(sub_messages[2])], 
                 "euler_angles":[float(sub_messages[3]), float(sub_messages[4]), float(sub_messages[5])]}
+
+    def on_message(self, callback_function):
+        self.callback_functions.append(callback_function)
 
 if __name__ == "__main__":
     reader = BufferSystem()
