@@ -42,7 +42,7 @@ def main():
     toolbox.reset_realsense_devices()
     manager.start()
 
-    # Register the pose messenger to send robot_pose over the pose_messenger stream whenever the t265_pose updates
+    # Register the t265_pose to send robot_pose over the pose_messenger stream whenever the t265_pose updates
     # This allows instantenous sending as soon as data is received, therefore reducing delay
     t265_pose.register_offset_transform_stream(offsetTransform=robot_pose, messenger=pose_messenger, max_decimals=3)
 
@@ -59,7 +59,7 @@ def main():
             x, y, z = position[0], position[1], position[2]
             pitch, yaw, roll = rotation[0], rotation[1], rotation[2]
             """
-            
+
             """
             print()
             print("[Robot Pose]")
