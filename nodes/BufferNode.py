@@ -130,6 +130,7 @@ class BufferSystem:
                                     self.messages[messenger.stream] = latest_msg.strip()
                                 for i in range(len(messenger.callback_functions)):
                                     messenger.callback_functions[i](latest_msg.strip())
+                self.errorRunOnce = False
 
             except serial.SerialException as e:
                 print("Serial communication error:", e)
@@ -143,11 +144,9 @@ class BufferSystem:
         
         if self.debugMode:
             run()
-            self.errorRunOnce = False
         else:
             try:
                 run()
-                self.errorRunOnce = False
             except Exception as e:
                 if self.reconnect() != 0:
                     if not self.errorRunOnce:
