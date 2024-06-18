@@ -37,7 +37,7 @@ class BufferSystem:
 
     def register_stream(self, messenger):
         """
-        This registers a stream (like "Arm" if the robot registers stream "Arm" too)
+        This registers a messenger object.
         """
         for i in range(len(self.registered_messengers)):
             msgr = self.registered_messengers[i]
@@ -200,14 +200,13 @@ class BufferSystem:
             box = f"[<{stream}>]{message}&={stream}*${end}".encode('utf-8')
             with self.lock: # Write protection for sending (to avoid another serial writing utility from weaving additional data into the packets)
                 self.ser.write(box)  # Encode string to bytes and send it over serial
-
+            self.errorRunOnce = False
         if self.debugMode:
             send()
             return True
         else:
             try:
                 send()
-                self.errorRunOnce = False
                 return True
             except:
                 if self.reconnect() != 0:
