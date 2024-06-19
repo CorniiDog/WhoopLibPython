@@ -46,8 +46,8 @@ def main():
     #manager.add_compute_node(vision)
 
     # looking for two devices
-    succeeded = toolbox.reset_realsense_devices(lookingfor=2) 
-    if not succeeded:
+    failed = toolbox.reset_realsense_devices(lookingfor=2) 
+    if failed:
         raise Exception("Was not able to find all devices to list")
     
     manager.start()
