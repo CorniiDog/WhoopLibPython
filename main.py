@@ -1,3 +1,4 @@
+import usb_resetter.usb_resetter
 import nodes.PoseNode as poseNode
 #import nodes.VisionNode as visionNode
 import nodes.NodeManager as nodeManager
@@ -43,8 +44,14 @@ def main():
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
     realsense_reset_failed = toolbox.reset_realsense_devices(lookingfor=num_realsense_devices) 
     while realsense_reset_failed:
-        print("Realsense Devices Not Detected, Rescanning in 3s")
-        time.sleep(3)
+        time.sleep(2)
+        print("Realsense Devices Not Detected, Rescanning controllers")
+        controllers_reset_error = toolbox.reset_all_usb_controllers()
+        time.sleep(2)
+        if controllers_reset_error:
+            print("Failed to reset all controllers. Trying again.")
+            continue
+        time.sleep(2)
         realsense_reset_failed = toolbox.reset_realsense_devices(lookingfor=num_realsense_devices)
         
     

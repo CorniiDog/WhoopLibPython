@@ -8,6 +8,21 @@ import numpy as np
 import re
 import subprocess
 
+def reset_all_usb_controllers():
+    try:
+        result = subprocess.run(['usb_resetter', '--reset-all'], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output = result.stdout.decode()
+        if output or len(output) > 0:
+            print("Output:", output)
+
+        errors = result.stderr.decode()
+        if errors or len(errors) > 0:
+            print("Errors:", errors)
+        return 0
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+        return 1
+
 def reboot_system():
     """Reboot the system."""
     try:
