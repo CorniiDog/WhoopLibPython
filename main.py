@@ -37,11 +37,16 @@ def main():
     # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
     #vision = visionNode.VisionSystem(d43i_pose, version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
     #manager.add_compute_node(vision)
+    
+    num_realsense_devices = 2
 
-    # looking for two devices
-    failed = toolbox.reset_realsense_devices(lookingfor=2) 
-    if failed:
-        raise Exception("Was not able to find all devices to list")
+    # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
+    realsense_reset_failed = toolbox.reset_realsense_devices(lookingfor=num_realsense_devices) 
+    while realsense_reset_failed:
+        print("Realsense Devices Not Detected, Rescanning in 3s")
+        time.sleep(3)
+        realsense_reset_failed = toolbox.reset_realsense_devices(lookingfor=num_realsense_devices)
+        
     
     manager.start()
 

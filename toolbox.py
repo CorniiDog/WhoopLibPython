@@ -5,6 +5,19 @@ from typing import List
 import pyrealsense2 as rs
 import math
 import numpy as np
+import re
+import subprocess
+
+def reboot_system():
+    """Reboot the system."""
+    try:
+        subprocess.run(["sudo", "reboot"], check=True)
+        print("System is rebooting...")
+        return 0
+    except subprocess.CalledProcessError as e:
+        print(f"Error rebooting the system: {e}")
+        return 1
+
 
 def find_all_indexes(string:str, substring:str) -> List[int]:
     start = 0
@@ -106,6 +119,9 @@ def reset_realsense_devices(lookingfor=2) -> bool:
     # Get a list of all connected devices
     devices = context.query_devices()
     
+    if len(devices) < lookingfor:
+        return 1
+
     i = 0
     if not devices:
         print("No Intel RealSense devices were found.")
