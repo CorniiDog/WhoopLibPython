@@ -6,6 +6,7 @@ import pyrealsense2 as rs
 import math
 import numpy as np
 import re
+import time
 import subprocess
 
 def reset_all_usb_controllers():
@@ -44,6 +45,20 @@ def find_all_indexes(string:str, substring:str) -> List[int]:
         indexes.append(start)
         start += len(substring)  # Move to the next possible start position
     return indexes
+
+def reset_and_initialize_realsense(lookingfor=2):
+    # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
+    realsense_reset_failed = reset_realsense_devices(lookingfor=lookingfor) 
+    while realsense_reset_failed:
+        time.sleep(2)
+        print("Realsense Devices Not Detected, Rescanning controllers")
+        controllers_reset_error = reset_all_usb_controllers()
+        time.sleep(2)
+        if controllers_reset_error:
+            print("Failed to reset all controllers. Trying again.")
+            continue
+        time.sleep(2)
+        realsense_reset_failed = reset_realsense_devices(lookingfor=lookingfor)
 
 def read_messages_from_buffer(buffer:str, start_marker:str, end_marker:str) -> List[str]:
     start_markers = find_all_indexes(buffer, start_marker)

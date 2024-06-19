@@ -42,17 +42,7 @@ def main():
     num_realsense_devices = 2
 
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
-    realsense_reset_failed = toolbox.reset_realsense_devices(lookingfor=num_realsense_devices) 
-    while realsense_reset_failed:
-        time.sleep(2)
-        print("Realsense Devices Not Detected, Rescanning controllers")
-        controllers_reset_error = toolbox.reset_all_usb_controllers()
-        time.sleep(2)
-        if controllers_reset_error:
-            print("Failed to reset all controllers. Trying again.")
-            continue
-        time.sleep(2)
-        realsense_reset_failed = toolbox.reset_realsense_devices(lookingfor=num_realsense_devices)
+    toolbox.reset_and_initialize_realsense(lookingfor=num_realsense_devices)
         
     
     manager.start()
