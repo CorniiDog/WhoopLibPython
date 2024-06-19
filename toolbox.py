@@ -3,6 +3,8 @@ import os
 from scipy.spatial.transform import Rotation as R
 from typing import List
 import pyrealsense2 as rs
+import math
+import numpy as np
 
 def find_all_indexes(string:str, substring:str) -> List[int]:
     start = 0
@@ -58,6 +60,29 @@ def clear_screen():
         print("Failed to clear the terminal")
 
 
+class Translation:
+    def __init__(self, x, y, z):
+        self.x = x
+        self.y = y
+        self.z = z
+
+class Rotation:
+    def __init__(self, x, y, z, w):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.w = w
+
+class Pose:
+    def __init__(self, translation:Translation, rotation:Rotation):
+        self.translation = translation
+        self.rotation = rotation
+
+def radian_wrap(angle):
+    """
+    Wraps an angle in radians to the range [-pi, pi]
+    """
+    return (angle + np.pi) % (2 * np.pi) - np.pi
 
 def get_position_and_euler(p):
     """
@@ -72,6 +97,7 @@ def get_position_and_euler(p):
     euler_angles = rotation.as_euler('xyz', degrees=False)  # Convert to degrees if required
     
     return {'position': (x, y, z), 'euler_angles': euler_angles}
+
 
 def reset_realsense_devices(lookingfor=2) -> bool:
     # Create a context object. This object owns the handles to all connected realsense devices

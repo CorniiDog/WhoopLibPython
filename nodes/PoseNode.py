@@ -11,6 +11,7 @@ import toolbox
 
 max_initialization_time = 3
 
+
 class PoseSystem:
     def __init__(self, debugMode=False):
         """
@@ -82,8 +83,21 @@ class PoseSystem:
         self.pipethread.join()
         self.pipeline.stop()
 
-    def register_offset_transform_stream(self, offsetTransform:offsetCalculator.OffsetTransform, messenger:bufferNode.Messenger, max_decimals=4):
+    def register_offset_transform_stream(self, offsetTransform: offsetCalculator.OffsetTransform, messenger: bufferNode.Messenger, max_decimals=4):
+        # Check for duplicates
+        for existing in self.OffsetTransforms:
+            if isinstance(existing[0], offsetCalculator.OffsetTransform) and existing[0] == offsetTransform:
+                print("Duplicate offsetTransform detected, not registering.")
+                return
         self.OffsetTransforms.append([offsetTransform, messenger, max_decimals])
+
+    def register_self_transform_stream(self, messenger: bufferNode.Messenger, max_decimals=4):
+        # Check for duplicates
+        for existing in self.OffsetTransforms:
+            if existing[0] is self:
+                print("Duplicate self transform detected, not registering.")
+                return
+        self.OffsetTransforms.append([self, messenger, max_decimals])
 
     def __step(self):
         """
@@ -101,11 +115,10 @@ class PoseSystem:
 
         if not pose:
             return
-        
-        # Lock and update variables
+
         with self.lock:
             self.p = pose
-
+            
         for i in range(len(self.OffsetTransforms)):
             pose_euler = self.OffsetTransforms[i][0].get_position_and_euler()
             self.OffsetTransforms[i][1].send_euler(pose_euler, max_decimals=self.OffsetTransforms[i][2])

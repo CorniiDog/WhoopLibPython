@@ -2,19 +2,19 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 import toolbox
 
-class _Pose:
+class Pose:
     def __init__(self, rotation, translation):
         self.rotation = rotation
         self.translation = translation
 
-class _Quaternion:
+class Quaternion:
     def __init__(self, x, y, z, w):
         self.x = x
         self.y = y
         self.z = z
         self.w = w
 
-class _Vector:
+class Vector:
     def __init__(self, x, y, z):
         self.x = x
         self.y = y
@@ -43,11 +43,11 @@ class OffsetTransform:
         new_quaternion = new_rotation.as_quat()
         
         # Create a new Quaternion and Vector for the new pose
-        new_pose_rotation = _Quaternion(new_quaternion[0], new_quaternion[1], new_quaternion[2], new_quaternion[3])
-        new_pose_translation = _Vector(new_translation[0], new_translation[1], new_translation[2])
+        new_pose_rotation = Quaternion(new_quaternion[0], new_quaternion[1], new_quaternion[2], new_quaternion[3])
+        new_pose_translation = Vector(new_translation[0], new_translation[1], new_translation[2])
         
         # Return a new Pose object with the updated rotation and translation
-        return _Pose(new_pose_rotation, new_pose_translation)
+        return Pose(new_pose_rotation, new_pose_translation)
         
     def get_position_and_euler(self):
         p = self.get_pose()
