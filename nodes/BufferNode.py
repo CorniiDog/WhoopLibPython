@@ -245,6 +245,19 @@ class Messenger:
         else:
             self.send(f"{x} {y} {z} {pitch} {yaw} {roll}")
 
+    def send_euler_with_confidence(self, pose_euler:Dict, max_decimals:int=-1, average_confidence=3) -> bool:
+        """
+        Sends a euler dict to the robot.
+        """
+        position, rotation = pose_euler["position"], pose_euler["euler_angles"]
+        x, y, z = position[0], position[1], position[2]
+        pitch, yaw, roll = rotation[0], rotation[1], rotation[2]
+
+        if max_decimals >= 0:
+            self.send(f"{x:.{max_decimals}f} {y:.{max_decimals}f} {z:.{max_decimals}f} {pitch:.{max_decimals}f} {yaw:.{max_decimals}f} {roll:.{max_decimals}f} {average_confidence:.{max_decimals}f}")
+        else:
+            self.send(f"{x} {y} {z} {pitch} {yaw} {roll} {average_confidence}")
+
     def read(self) -> str:
         """
         Attempts to read a message from the robot.

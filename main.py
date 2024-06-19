@@ -30,7 +30,7 @@ def main():
     # The center bottom of the robot is 150 millimeters below camera (since the camera is obviously higher than the bottom of the robot)
     # The camera is perfectly centered on the front of the robot, so px doesn't need to be changed, and neither does the rx, ry, rz, and rw values for rotation.
     # The center of mass of the robot is about 196 millimeters behind the camera, so we set pz to 196/1000 to convert to meters.
-    robot_pose = offsetCalculator.OffsetTransform(t265_pose, px=0, py=-150/1000, pz=196/1000)
+    robot_pose = offsetCalculator.OffsetTransform(t265_pose, px=0, py=0, pz=196/1000) # px=0, py=-150/1000, pz=196/1000
 
     # This is the pose messenger system for the V5 Brain. Communication
     pose_messenger = bufferNode.Messenger(buffer_system, stream="P")
