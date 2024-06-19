@@ -16,7 +16,7 @@ class PoseSystem:
         """
         Initializes configurations for pose estimation
         """
-        self.Pose = namedtuple('Pose', attrs)
+        self.p = None
         self.pipeline = rs.pipeline()
         self.cfg = rs.config()
         # if only pose stream is enabled, fps is higher (202 vs 30)
