@@ -11,17 +11,6 @@ import toolbox
 
 max_initialization_time = 3
 
-attrs = [
-    'acceleration',
-    'angular_acceleration',
-    'angular_velocity',
-    'mapper_confidence',
-    'rotation',
-    'tracker_confidence',
-    'translation',
-    'velocity',
-]
-
 class PoseSystem:
     def __init__(self, debugMode=False):
         """
@@ -113,16 +102,13 @@ class PoseSystem:
         if not pose:
             return
         
-        #p = self.Pose(*map(partial(getattr, pose), attrs))
         # Lock and update variables
         with self.lock:
             self.p = pose
 
-        average_confidence = (pose.tracker_confidence + pose.mapper_confidence) / 2
-
         for i in range(len(self.OffsetTransforms)):
             pose_euler = self.OffsetTransforms[i][0].get_position_and_euler()
-            self.OffsetTransforms[i][1].send_euler_with_confidence(pose_euler, max_decimals=self.OffsetTransforms[i][2], average_confidence=average_confidence)
+            self.OffsetTransforms[i][1].send_euler(pose_euler, max_decimals=self.OffsetTransforms[i][2])
 
 
     def get_pose(self):
