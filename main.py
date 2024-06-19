@@ -43,7 +43,6 @@ def main():
 
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
     toolbox.reset_and_initialize_realsense(lookingfor=num_realsense_devices)
-        
     
     manager.start()
 
