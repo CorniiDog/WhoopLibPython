@@ -130,7 +130,9 @@ class BufferSystem:
                                     self.messages[messenger.stream] = latest_msg.strip()
                                 for i in range(len(messenger.callback_functions)):
                                     messenger.callback_functions[i](latest_msg.strip())
-                self.errorRunOnce = False
+                if self.errorRunOnce:
+                    print("Error resolved")
+                    self.errorRunOnce = False
 
             except serial.SerialException as e:
                 print("Serial communication error:", e)
@@ -199,7 +201,9 @@ class BufferSystem:
             box = f"[<{stream}>]{message}&={stream}*${end}".encode('utf-8')
             with self.lock: # Write protection for sending (to avoid another serial writing utility from weaving additional data into the packets)
                 self.ser.write(box)  # Encode string to bytes and send it over serial
-            self.errorRunOnce = False
+            if self.errorRunOnce:
+                    print("Error resolved")
+                    self.errorRunOnce = False
         if self.debugMode:
             send()
             return True
