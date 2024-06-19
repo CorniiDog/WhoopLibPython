@@ -45,7 +45,11 @@ def main():
     #vision = visionNode.VisionSystem(d43i_pose, version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
     #manager.add_compute_node(vision)
 
-    toolbox.reset_realsense_devices()
+    # looking for two devices
+    succeeded = toolbox.reset_realsense_devices(lookingfor=2) 
+    if not succeeded:
+        raise Exception("Was not able to find all devices to list")
+    
     manager.start()
 
     try:

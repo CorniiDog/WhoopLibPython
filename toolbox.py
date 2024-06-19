@@ -73,13 +73,14 @@ def get_position_and_euler(p):
     
     return {'position': (x, y, z), 'euler_angles': euler_angles}
 
-def reset_realsense_devices():
+def reset_realsense_devices(lookingfor=2) -> bool:
     # Create a context object. This object owns the handles to all connected realsense devices
     context = rs.context()
     
     # Get a list of all connected devices
     devices = context.query_devices()
     
+    i = 0
     if not devices:
         print("No Intel RealSense devices were found.")
     else:
@@ -87,3 +88,8 @@ def reset_realsense_devices():
             # The hardware_reset() method sends a hardware reset command that forces the device to disconnect and reconnect
             print(f"Resetting device: {dev.get_info(rs.camera_info.serial_number)}")
             dev.hardware_reset()
+            i += 1
+            
+    if i >= lookingfor:
+        return 0
+    return 1
