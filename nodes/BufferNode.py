@@ -167,9 +167,17 @@ class BufferSystem:
         if not self.running:
             return
         self.running = False
-
         self.allowable_run = False
-        self.pipethread.join()
+        
+        # Ensure pipethread exists before joining
+        if hasattr(self, 'pipethread'):
+            self.pipethread.join()
+        
+        try:
+            if self.ser and self.ser.isOpen():
+                self.ser.close()
+        except Exception as e:
+            print(f"Error stopping pipeline: {e}")
 
     def get_message(self, stream:str, delete_after_read=False) -> str:
         """

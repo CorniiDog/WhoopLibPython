@@ -8,7 +8,6 @@ from scipy.spatial.transform import Rotation as R
 import calculators.OffsetTransform as offsetCalculator
 import nodes.BufferNode as bufferNode
 import toolbox
-
 max_initialization_time = 3
 
 
@@ -80,8 +79,15 @@ class PoseSystem:
         self.running = False
 
         self.allowable_run = False
-        self.pipethread.join()
-        self.pipeline.stop()
+        
+        # Ensure pipethread exists before joining
+        if hasattr(self, 'pipethread'):
+            self.pipethread.join()
+        
+        try:
+            self.pipeline.stop()
+        except Exception as e:
+            print(f"Error stopping pipeline: {e}")
 
     def register_offset_transform_stream(self, offsetTransform: offsetCalculator.OffsetTransform, messenger: bufferNode.Messenger, max_decimals=4):
         # Check for duplicates
@@ -98,6 +104,7 @@ class PoseSystem:
                 print("Duplicate self transform detected, not registering.")
                 return
         self.OffsetTransforms.append([self, messenger, max_decimals])
+
 
     def __step(self):
         """

@@ -42,6 +42,8 @@ class VisionSystem:
         self.laser_enabled = enable_laser
         self.pose = pose_node
         self.debugMode = debugMode
+
+        self.cv2_window_created = False  # Flag to track if OpenCV window is created
         
     def start_pipeline(self, lock:threading.Lock=None):
         """
@@ -98,14 +100,25 @@ class VisionSystem:
         if not self.running:
             return
         self.running = False
-        
+
         self.allowable_run = False
-        self.pipethread.join()
-        self.pipeline.stop()
+        
+        # Ensure pipethread exists before joining
+        if hasattr(self, 'pipethread'):
+            self.pipethread.join()
+        
         try:
-            cv2.destroyAllWindows()
-        except:
-            pass
+            self.pipeline.stop()
+        except Exception as e:
+            print(f"Error stopping pipeline: {e}")
+        
+        if self.cv2_window_created:
+            try:
+                cv2.destroyAllWindows()
+                self.cv2_window_created = False
+            except Exception as e:
+                print(f"Error destroying OpenCV windows: {e}")
+
 
     def __world_pos_from_pose(self, p, r, x_relative, y_relative, z_relative):
 
@@ -234,4 +247,5 @@ class VisionSystem:
         # Show results
         cv2.imshow('YOLOv5 Detection', rendered_frame_bgr)
         cv2.waitKey(1)
+        self.cv2_window_created = True  # Set flag when a window is created
             
