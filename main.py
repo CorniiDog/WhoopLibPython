@@ -28,7 +28,7 @@ def main():
     # Image of the transformation origins: https://files.readme.io/29080d9-Tracking_Depth_fixture_image.png
     d43i_pose = offsetCalculator.OffsetTransform(t265_pose, px=-16/1000, py=36.40/1000, pz=-4/1000) 
 
-    # This is the pose messenger system for the V5 Brain. Communication
+    # This is the pose messenger system for the V5 Brain's Serial Connection.
     pose_messenger = bufferNode.Messenger(buffer_system, stream="P")
 
     # Register to send the t265 pose to the robot
@@ -38,11 +38,10 @@ def main():
     # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
     #vision = visionNode.VisionSystem(d43i_pose, version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
     #manager.add_compute_node(vision)
-    
-    num_realsense_devices = 2
 
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
-    toolbox.reset_and_initialize_realsense(lookingfor=num_realsense_devices)
+    # We input that we expect n devices and should try to reset them. If we cannot find n devices, restart/power cycle all USB controllers until we do.
+    toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2)
     
     manager.start()
 

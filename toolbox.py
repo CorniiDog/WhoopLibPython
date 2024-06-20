@@ -46,7 +46,7 @@ def find_all_indexes(string:str, substring:str) -> List[int]:
         start += len(substring)  # Move to the next possible start position
     return indexes
 
-def reset_and_initialize_realsense(lookingfor=2):
+def reset_and_initialize_realsense(expecting_num_realsense_devices=2):
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
     realsense_reset_failed = reset_realsense_devices(lookingfor=lookingfor) 
     while realsense_reset_failed:
@@ -58,7 +58,7 @@ def reset_and_initialize_realsense(lookingfor=2):
             print("Failed to reset all controllers. Trying again.")
             continue
         time.sleep(2)
-        realsense_reset_failed = reset_realsense_devices(lookingfor=lookingfor)
+        realsense_reset_failed = reset_realsense_devices(expecting_num_realsense_devices=expecting_num_realsense_devices)
 
 def read_messages_from_buffer(buffer:str, start_marker:str, end_marker:str) -> List[str]:
     start_markers = find_all_indexes(buffer, start_marker)
@@ -142,14 +142,14 @@ def get_position_and_euler(p):
     return {'position': (x, y, z), 'euler_angles': euler_angles}
 
 
-def reset_realsense_devices(lookingfor=2) -> bool:
+def reset_realsense_devices(expecting_num_realsense_devices=2) -> bool:
     # Create a context object. This object owns the handles to all connected realsense devices
     context = rs.context()
     
     # Get a list of all connected devices
     devices = context.query_devices()
     
-    if len(devices) < lookingfor:
+    if len(devices) < expecting_num_realsense_devices:
         return 1
 
     i = 0
@@ -162,6 +162,6 @@ def reset_realsense_devices(lookingfor=2) -> bool:
             dev.hardware_reset()
             i += 1
             
-    if i >= lookingfor:
+    if i >= expecting_num_realsense_devices:
         return 0
     return 1
