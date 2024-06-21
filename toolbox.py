@@ -48,7 +48,7 @@ def find_all_indexes(string:str, substring:str) -> List[int]:
 
 def reset_and_initialize_realsense(expecting_num_realsense_devices=2):
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
-    realsense_reset_failed = reset_realsense_devices(lookingfor=lookingfor) 
+    realsense_reset_failed = reset_realsense_devices(expecting_num_realsense_devices=expecting_num_realsense_devices) 
     while realsense_reset_failed:
         time.sleep(2)
         print("Realsense Devices Not Detected, Rescanning controllers")
