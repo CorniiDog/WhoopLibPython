@@ -32,7 +32,7 @@ def main():
     pose_messenger = bufferNode.Messenger(buffer_system, stream="P")
 
     # Register to send the t265 pose to the robot
-    t265_pose.register_self_transform_stream(messenger=pose_messenger, max_decimals=3)
+    t265_pose.register_self_transform_stream(messenger=pose_messenger, max_decimals=5)
 
     # Object node
     # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
