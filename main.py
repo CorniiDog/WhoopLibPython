@@ -61,9 +61,12 @@ def main():
     # We input that we expect n devices and should try to reset them. If we cannot find n devices, restart/power cycle all USB controllers until we do.
     toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
 
+    sys_lock = False
+
     def message_received(message:str):
         nonlocal countdown_timer
         nonlocal worker_started
+        nonlocal sys_lock
         stripped_message = message.strip()
 
         if "Initialize" in stripped_message:
@@ -73,6 +76,9 @@ def main():
                 worker.stop()
                 time.sleep(3)
                 worker_started = False
+            sys_lock = True
+            toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
+            sys_lock = False
 
         if "Reboot" in stripped_message:
             print("Rebooting")
@@ -83,15 +89,12 @@ def main():
             time.sleep(1)
             toolbox.shutdown_system()
 
-        print(1)
 
         try:
             asked_time = int(stripped_message.split(" ")[0])
-            print(2)
         except:
             return
         
-        print(asked_time)
         if asked_time < 0:
             asked_time *= -1
 
@@ -111,8 +114,10 @@ def main():
     try:
         print("Running")
         while True:
+            while(sys_lock):
+                time.sleep(0.1)
             countdown_timer -= 1
-            print(countdown_timer)
+
             if countdown_timer < 0:
                 if worker_started:
                     print("Stopped working as no keep-alive from V5 Brain")
