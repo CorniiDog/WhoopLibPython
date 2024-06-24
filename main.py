@@ -65,44 +65,40 @@ def main():
 
     def message_received(message:str):
         global countdown_timer
+        global worker_started
+        stripped_message = message.strip()
+
+        if "Initialize" in stripped_message:
+            print("Initializing")
+            if worker_started:
+                print("Shutting down running instances")
+                worker.stop()
+                time.sleep(3)
+                worker_started = False
+
+        if "Reboot" in stripped_message:
+            print("Rebooting")
+            time.sleep(1)
+            toolbox.reboot_system()
+        elif "Shutdown" in stripped_message:
+            print("Shutting down")
+            time.sleep(1)
+            toolbox.shutdown_system()
         try:
-            stripped_message = message.strip()
-
-            if "Initialize" in stripped_message:
-                print("Initializing")
-                if worker_started:
-                    print("Shutting down running instances")
-                    worker.stop()
-                    time.sleep(3)
-                    worker_started = False
-
-            if "Reboot" in stripped_message:
-                print("Rebooting")
-                time.sleep(1)
-                toolbox.reboot_system()
-            elif "Shutdown" in stripped_message:
-                print("Shutting down")
-                time.sleep(1)
-                toolbox.shutdown_system()
-            try:
-                asked_time = int(stripped_message.split(" ")[0])
-            except:
-                return
-            
-            if asked_time < 0:
-                asked_time *= -1
-
-            countdown_timer = asked_time
-
-            if not worker_started:
-                worker_started = True
-                print("Started working as per request by V5 Brain")
-                communication_messenger.send("Approved")
-                worker.start()
-
-        except Exception as e:
-            print(e.with_traceback)
+            asked_time = int(stripped_message.split(" ")[0])
+        except:
             return
+        
+        if asked_time < 0:
+            asked_time *= -1
+
+        countdown_timer = asked_time
+
+        if not worker_started:
+            worker_started = True
+            print("Started working as per request by V5 Brain")
+            communication_messenger.send("Approved")
+            worker.start()
 
     communication_messenger.on_message(message_received)
 
