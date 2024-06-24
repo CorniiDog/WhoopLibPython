@@ -9,7 +9,7 @@ import numpy as np
 
 import time, math
 
-restart_time_minutes = 60 # minutes
+restart_time_minutes = 120 # minutes
 
 def main():
     # Create a manager
@@ -59,25 +59,36 @@ def main():
     countdown_timer = 0
     worker_started = False
 
-    keep_alive_messenger = bufferNode.Messenger(buffer_system, stream="K", deleteAfterRead=True)
+    communication_messenger = bufferNode.Messenger(buffer_system, stream="C", deleteAfterRead=True)
 
-    keep_alive_messenger.send("Hello")
+    communication_messenger.send("Hello")
 
     def message_received(message:str):
         global countdown_timer
         try:
             stripped_message = message.strip()
 
-            if stripped_message == "Reboot":
+            if "Initialize" in stripped_message:
+                print("Initializing")
+                if worker_started:
+                    print("Shutting down running instances")
+                    worker.stop()
+                    time.sleep(3)
+                    worker_started = False
+
+            if "Reboot" in stripped_message:
                 print("Rebooting")
                 time.sleep(1)
                 toolbox.reboot_system()
-            elif stripped_message == "Shutdown":
+            elif "Shutdown" in stripped_message:
                 print("Shutting down")
                 time.sleep(1)
                 toolbox.shutdown_system()
-
-            asked_time = int(stripped_message.split(" ")[0])
+            try:
+                asked_time = int(stripped_message.split(" ")[0])
+            except:
+                return
+            
             if asked_time < 0:
                 asked_time *= -1
 
@@ -86,17 +97,14 @@ def main():
             if not worker_started:
                 worker_started = True
                 print("Started working as per request by V5 Brain")
-                keep_alive_messenger.send("Approved")
-                try:
-                    worker.start()
-                except Exception as e:
-                    print(e.with_traceback)
+                communication_messenger.send("Approved")
+                worker.start()
 
         except Exception as e:
             print(e.with_traceback)
             return
 
-    keep_alive_messenger.on_message(message_received)
+    communication_messenger.on_message(message_received)
 
     manager.start()
 
@@ -106,16 +114,13 @@ def main():
             countdown_timer -= 1
             if countdown_timer < 0:
                 if worker_started:
-                    try:
-                        print("Stopped working as no keep-alive from V5 Brain")
-                        worker.stop()
-                        worker_started = False
-                    except Exception as e:
-                        print(e.with_traceback)
+                    print("Stopped working as no keep-alive from V5 Brain")
+                    worker.stop()
+                    worker_started = False
 
-            # Reboot system every x minutes to clear memory leaks
-            if (-countdown_timer) > restart_time_minutes*60:
-                toolbox.reboot_system()
+                # Reboot system every x minutes to clear memory leaks
+                if (-countdown_timer) > restart_time_minutes*60:
+                    toolbox.reboot_system()
             # Sleep
             time.sleep(1)
 
