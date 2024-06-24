@@ -48,8 +48,6 @@ def main():
     try:
         print("Running")
         while True:
-
-            
             """
             # Pose of robot
             robot_pose_euler = robot_pose.get_position_and_euler()
