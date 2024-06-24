@@ -102,6 +102,9 @@ def main():
         countdown_timer = asked_time
 
         if not worker_started:
+            sys_lock = True
+            toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
+            sys_lock = False
             worker_started = True
             print("Started working as per request by V5 Brain")
             worker.start()
