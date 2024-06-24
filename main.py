@@ -48,10 +48,6 @@ def main():
     # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
     #vision = visionNode.VisionSystem(d43i_pose, version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
     #worker.add_compute_node(vision)
-
-    # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
-    # We input that we expect n devices and should try to reset them. If we cannot find n devices, restart/power cycle all USB controllers until we do.
-    toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2)
     
     #######################################################
     # Communication and control of Vision System
@@ -61,11 +57,13 @@ def main():
 
     communication_messenger = bufferNode.Messenger(buffer_system, stream="C", deleteAfterRead=True)
 
-    communication_messenger.send("Hello")
+    # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
+    # We input that we expect n devices and should try to reset them. If we cannot find n devices, restart/power cycle all USB controllers until we do.
+    toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
 
     def message_received(message:str):
-        global countdown_timer
-        global worker_started
+        nonlocal countdown_timer
+        nonlocal worker_started
         stripped_message = message.strip()
 
         if "Initialize" in stripped_message:
@@ -84,11 +82,16 @@ def main():
             print("Shutting down")
             time.sleep(1)
             toolbox.shutdown_system()
+
+        print(1)
+
         try:
             asked_time = int(stripped_message.split(" ")[0])
+            print(2)
         except:
             return
         
+        print(asked_time)
         if asked_time < 0:
             asked_time *= -1
 
@@ -101,6 +104,7 @@ def main():
             worker.start()
 
     communication_messenger.on_message(message_received)
+    communication_messenger.send("Hello")
 
     manager.start()
 
@@ -108,6 +112,7 @@ def main():
         print("Running")
         while True:
             countdown_timer -= 1
+            print(countdown_timer)
             if countdown_timer < 0:
                 if worker_started:
                     print("Stopped working as no keep-alive from V5 Brain")

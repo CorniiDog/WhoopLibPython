@@ -56,7 +56,7 @@ def find_all_indexes(string:str, substring:str) -> List[int]:
         start += len(substring)  # Move to the next possible start position
     return indexes
 
-def reset_and_initialize_realsense(expecting_num_realsense_devices=2):
+def reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=None):
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
     realsense_reset_failed = reset_realsense_devices(expecting_num_realsense_devices=expecting_num_realsense_devices) 
     while realsense_reset_failed:
@@ -66,6 +66,8 @@ def reset_and_initialize_realsense(expecting_num_realsense_devices=2):
         time.sleep(2)
         if controllers_reset_error:
             print("Failed to reset all controllers. Trying again.")
+            if messenger:
+                messenger.send("Failed")
             continue
         time.sleep(2)
         realsense_reset_failed = reset_realsense_devices(expecting_num_realsense_devices=expecting_num_realsense_devices)
