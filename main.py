@@ -59,7 +59,7 @@ def main():
 
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
     # We input that we expect n devices and should try to reset them. If we cannot find n devices, restart/power cycle all USB controllers until we do.
-    toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
+    #toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
 
     sys_lock = False
 
@@ -89,11 +89,12 @@ def main():
             time.sleep(1)
             toolbox.shutdown_system()
 
-
         try:
             asked_time = int(stripped_message.split(" ")[0])
         except:
+            communication_messenger.send("Rejected Time Reset")
             return
+        communication_messenger.send("Approved")
         
         if asked_time < 0:
             asked_time *= -1
@@ -103,7 +104,6 @@ def main():
         if not worker_started:
             worker_started = True
             print("Started working as per request by V5 Brain")
-            communication_messenger.send("Approved")
             worker.start()
 
     communication_messenger.on_message(message_received)
