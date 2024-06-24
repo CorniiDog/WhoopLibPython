@@ -234,7 +234,7 @@ class Messenger:
         """
         self.stream = stream
         self.bufferSystem = bufferSystem
-        self.bufferSystem.register_stream(stream)
+        self.bufferSystem.register_stream(self)
         self.deleteAfterRead = deleteAfterRead
         self.callback_functions = []
 

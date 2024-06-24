@@ -59,7 +59,7 @@ def main():
     countdown_timer = 0
     worker_started = False
 
-    keep_alive_messenger = bufferNode.Messenger(buffer_system, "K")
+    keep_alive_messenger = bufferNode.Messenger(buffer_system, stream="K", deleteAfterRead=True)
 
     keep_alive_messenger.send("Hello")
 
@@ -77,7 +77,7 @@ def main():
                 time.sleep(1)
                 toolbox.shutdown_system()
 
-            asked_time = int(stripped_message.split()[0])
+            asked_time = int(stripped_message.split(" ")[0])
             if asked_time < 0:
                 asked_time *= -1
 
