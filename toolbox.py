@@ -33,6 +33,16 @@ def reboot_system():
     except subprocess.CalledProcessError as e:
         print(f"Error rebooting the system: {e}")
         return 1
+    
+def shutdown_system():
+    """Shut down the system."""
+    try:
+        subprocess.run(["sudo", "shutdown", "now"], check=True)
+        print("System is shutting down..")
+        return 0
+    except subprocess.CalledProcessError as e:
+        print(f"Error shutting down the system: {e}")
+        return 1
 
 
 def find_all_indexes(string:str, substring:str) -> List[int]:

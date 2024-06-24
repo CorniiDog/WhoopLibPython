@@ -9,16 +9,26 @@ import numpy as np
 
 import time, math
 
+restart_time_minutes = 60 # minutes
+
 def main():
     # Create a manager
     manager = nodeManager.ComputeManager()
-    # Node for T265 Pose (the base)
-    t265_pose = poseNode.PoseSystem()
-    manager.add_compute_node(t265_pose)
-    
     # Node for communication with V5 Brain
     buffer_system = bufferNode.BufferSystem(max_buffer_size=256, port_search_name="VEX Robotics V5 Brain", rate=115200)
     manager.add_compute_node(buffer_system)
+
+    #######################################################
+    # Vision System
+    #######################################################
+
+    # Create a worker for the manager
+    worker = nodeManager.ComputeManager()
+
+    # Node for T265 Pose (the base)
+    t265_pose = poseNode.PoseSystem()
+    worker.add_compute_node(t265_pose)
+    
 
     # This is for retreiving the pose of the d435i camera as an offset of the T265 transformation (in meters)
     # This of an x y z offset relative to the T265 camera (rigidly attached)
@@ -37,57 +47,77 @@ def main():
     # Object node
     # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
     #vision = visionNode.VisionSystem(d43i_pose, version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
-    #manager.add_compute_node(vision)
+    #worker.add_compute_node(vision)
 
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
     # We input that we expect n devices and should try to reset them. If we cannot find n devices, restart/power cycle all USB controllers until we do.
     toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2)
     
+    #######################################################
+    # Communication and control of Vision System
+    #######################################################
+    countdown_timer = 0
+    worker_started = False
+
+    keep_alive_messenger = bufferNode.Messenger(buffer_system, "K")
+
+    keep_alive_messenger.send("Hello")
+
+    def message_received(message:str):
+        global countdown_timer
+        try:
+            stripped_message = message.strip()
+
+            if stripped_message == "Reboot":
+                print("Rebooting")
+                time.sleep(1)
+                toolbox.reboot_system()
+            elif stripped_message == "Shutdown":
+                print("Shutting down")
+                time.sleep(1)
+                toolbox.shutdown_system()
+
+            asked_time = int(stripped_message.split()[0])
+            if asked_time < 0:
+                asked_time *= -1
+
+            countdown_timer = asked_time
+
+            if not worker_started:
+                worker_started = True
+                print("Started working as per request by V5 Brain")
+                keep_alive_messenger.send("Approved")
+                try:
+                    worker.start()
+                except Exception as e:
+                    print(e.with_traceback)
+
+        except Exception as e:
+            print(e.with_traceback)
+            return
+
+    keep_alive_messenger.on_message(message_received)
+
     manager.start()
 
     try:
         print("Running")
         while True:
-            """
-            # Pose of robot
-            robot_pose_euler = robot_pose.get_position_and_euler()
+            countdown_timer -= 1
+            if countdown_timer < 0:
+                if worker_started:
+                    try:
+                        print("Stopped working as no keep-alive from V5 Brain")
+                        worker.stop()
+                        worker_started = False
+                    except Exception as e:
+                        print(e.with_traceback)
 
-            # Printing the x y z pitch yaw roll of the robot
-            position, rotation = robot_pose_euler["position"], robot_pose_euler["euler_angles"]
-            x, y, z = position[0], position[1], position[2]
-            pitch, yaw, roll = rotation[0], rotation[1], rotation[2]
-            print(f"{x:.3} {y:.3} {z:.3} {pitch:.3} {yaw:.3} {roll:.3}")
-            """
-            """
-            print()
-            print("[Robot Pose]")
-            print(f"x: {x:.2f} m | pitch: {pitch:.2f} rad \ny: {y:.2f} m | yaw: {yaw:.2f} rad \nz: {z:.2f} m | roll: {roll:.2f} rad")
-            """
-
-            # Pose of D435i (Same call for robot and T265)
-            """
-            d435pose_euler = d43i_pose.get_position_and_euler()
-            d435pos = d435pose_euler["position"]
-            d435ix = d435pos[0]
-            d435iy = d435pos[1]
-            d435iz = d435pos[2]
-            """
-
-            """
-            objects = vision.get_objects(name_filter=["sports ball"])
-
-            print("[Objects]")
-            for i, object in enumerate(objects):
-                name = object["name"]
-                x = object["x"] # Position in world space
-                y = object["y"]
-                z = object["z"]
-                print(f"Object {i}: x: {x:.2f}, y: {y:.2f}, z: {z:.2f}")
-                # You can do whatever with this.
-            """ 
-
-            #vision.display_results()
-            time.sleep(0.01)
+            # Reboot system every x minutes to clear memory leaks
+            if (-countdown_timer) > restart_time_minutes*60:
+                toolbox.reboot_system()
+            # Sleep
+            time.sleep(1)
 
     finally: # <-- If CTRL + C
         manager.stop()
