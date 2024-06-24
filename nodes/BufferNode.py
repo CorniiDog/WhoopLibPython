@@ -244,7 +244,7 @@ class Messenger:
         """
         return self.bufferSystem.send_message(self.stream, message=message)
 
-    def send_euler(self, pose_euler:Dict, max_decimals:int=-1) -> bool:
+    def send_euler(self, pose_euler:Dict, max_decimals:int=-1, confidence=1) -> bool:
         """
         Sends a euler dict to the robot.
         """
@@ -253,9 +253,9 @@ class Messenger:
         pitch, yaw, roll = rotation[0], rotation[1], rotation[2]
 
         if max_decimals >= 0:
-            self.send(f"{x:.{max_decimals}f} {y:.{max_decimals}f} {z:.{max_decimals}f} {pitch:.{max_decimals}f} {yaw:.{max_decimals}f} {roll:.{max_decimals}f}")
+            self.send(f"{x:.{max_decimals}f} {y:.{max_decimals}f} {z:.{max_decimals}f} {pitch:.{max_decimals}f} {yaw:.{max_decimals}f} {roll:.{max_decimals}f} {confidence}")
         else:
-            self.send(f"{x} {y} {z} {pitch} {yaw} {roll}")
+            self.send(f"{x} {y} {z} {pitch} {yaw} {roll} {confidence}")
 
     def read(self) -> str:
         """

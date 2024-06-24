@@ -128,7 +128,7 @@ class PoseSystem:
             
         for i in range(len(self.OffsetTransforms)):
             pose_euler = self.OffsetTransforms[i][0].get_position_and_euler()
-            self.OffsetTransforms[i][1].send_euler(pose_euler, max_decimals=self.OffsetTransforms[i][2])
+            self.OffsetTransforms[i][1].send_euler(pose_euler, max_decimals=self.OffsetTransforms[i][2], confidence=pose.tracker_confidence)
 
 
     def get_pose(self):
