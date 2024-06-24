@@ -1,0 +1,13 @@
+[Unit]
+Description=Run WhoopLibPython main script
+After=network.target
+
+[Service]
+Type=simple
+User=jetson
+WorkingDirectory=/home/jetson/Desktop/WhoopLibPython/
+ExecStart=/usr/bin/python3.8 /home/jetson/Desktop/WhoopLibPython/main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
