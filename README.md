@@ -21,29 +21,11 @@ The most advanced SLAM solution in VEX.
 
 ## Project Links
 
-WhoopLibVEXCode: https://github.com/ConnorAtmos/WhoopLibVEXCode
+Documentation: https://connoratmos.github.io/WhoopLibVEXCode/#/
 
-WhoopLibPython: https://github.com/ConnorAtmos/WhoopLibPython
+WhoopLibVEXCode Github: https://github.com/ConnorAtmos/WhoopLibVEXCode
 
-## Installation for Jetson Nano
-
-[Instructions to build Vision Tesseract for Jetson Nano from Source](https://docs.google.com/document/d/1R466WGGEFfLnCq74Ui_tFQveaQ1RHnSQTE2j4t9e8I4/edit?usp=sharing)
-
-SSH into your jetson nano via "```ssh jetson@your_jetson_ip```"
-
-Password should be "```jetson```"
-
-Run the following to update to the latest version of the WhoopLibPython and reboot.
-
-```bash
-  cd ~/Desktop/WhoopLibPython
-
-  git fetch
-
-  git pull
-
-  sudo reboot now
-```
+WhoopLibPython Github: https://github.com/ConnorAtmos/WhoopLibPython
 
 ## Acknowledgements
 
