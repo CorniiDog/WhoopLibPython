@@ -20,6 +20,20 @@ The most advanced SLAM solution in VEX.
 WhoopLibVEXCode: https://github.com/ConnorAtmos/WhoopLibVEXCode
 WhoopLibPython: https://github.com/ConnorAtmos/WhoopLibPython
 
+## Features
+
+- Visual Odometry/Pose Estimation
+- Wheel Odometry/Pose Estimation
+- Communication between V5 Brain and Jetson Nano
+
+## Roadmap
+
+- Fusion between Visual Pose Estimation and Wheel Odometry
+- Object Detection and Gridded Permanence systenm
+- Moving between Point A and Point B
+- Documentation
+- Detecting other robots that impede the path of the robot, and drive around
+- Virtual Highway system
 
 ## Installation for V5 Brain
 
@@ -68,23 +82,6 @@ The Documentation is planned to be developed. Will be updated upon creation.
  - [E-Bots πLons](http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf)
  - [Librealsense](https://github.com/IntelRealSense/librealsense)
  - [VEX Robotics](https://github.com/VEX-Robotics-AI)
-
-
-## Features
-
-- Visual Odometry/Pose Estimation
-- Wheel Odometry/Pose Estimation
-- Communication between V5 Brain and Jetson Nano
-
-
-## Roadmap
-
-- Fusion between Visual Pose Estimation and Wheel Odometry
-- Object Detection and Gridded Permanence systenm
-- Moving between Point A and Point B
-- Documentation
-- Detecting other robots that impede the path of the robot, and drive around
-- Virtual Highway system
 
 <!-- LICENSE -->
 ## License
