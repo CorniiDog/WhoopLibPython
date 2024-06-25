@@ -55,8 +55,6 @@ Installing Whooplib VEXCode (On your computer):
 
 ## Installation for Jetson Nano
 
-Installing Whooplib Python (SSH On your Jetson Nano via "ssh jetson@your_jetson_ip"):
-
 [Instructions to build Vision Tesseract for Jetson Nano from Source](https://docs.google.com/document/d/1R466WGGEFfLnCq74Ui_tFQveaQ1RHnSQTE2j4t9e8I4/edit?usp=sharing)
 
 SSH into your jetson nano via "```ssh jetson@your_jetson_ip```"
@@ -99,16 +97,16 @@ Connor White - connor.sw.personal@gmail.com
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[contributors-url]: https://github.com/ConnorAtmos/WhoopLibPython/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[forks-url]: https://github.com/ConnorAtmos/WhoopLibPython/network/members
-[stars-shield]: https://img.shields.io/github/stars/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[stars-url]: https://github.com/ConnorAtmos/WhoopLibPython/stargazers
-[issues-shield]: https://img.shields.io/github/issues/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[issues-url]: https://github.com/ConnorAtmos/WhoopLibPython/issues
-[license-shield]: https://img.shields.io/github/license/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[license-url]: https://github.com/ConnorAtmos/WhoopLibPython/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/ConnorAtmos/WhoopLibVEXCode.svg?style=for-the-badge
+[contributors-url]: https://github.com/ConnorAtmos/WhoopLibVEXCode/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/ConnorAtmos/WhoopLibVEXCode.svg?style=for-the-badge
+[forks-url]: https://github.com/ConnorAtmos/WhoopLibVEXCode/network/members
+[stars-shield]: https://img.shields.io/github/stars/ConnorAtmos/WhoopLibVEXCode.svg?style=for-the-badge
+[stars-url]: https://github.com/ConnorAtmos/WhoopLibVEXCode/stargazers
+[issues-shield]: https://img.shields.io/github/issues/ConnorAtmos/WhoopLibVEXCode.svg?style=for-the-badge
+[issues-url]: https://github.com/ConnorAtmos/WhoopLibVEXCode/issues
+[license-shield]: https://img.shields.io/github/license/ConnorAtmos/WhoopLibVEXCode.svg?style=for-the-badge
+[license-url]: https://github.com/ConnorAtmos/WhoopLibVEXCode/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/connor-white-38a5501a0/
 
