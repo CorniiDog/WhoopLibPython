@@ -25,35 +25,6 @@ WhoopLibVEXCode: https://github.com/ConnorAtmos/WhoopLibVEXCode
 
 WhoopLibPython: https://github.com/ConnorAtmos/WhoopLibPython
 
-## Features
-
-- Visual Odometry/Pose Estimation
-- Wheel Odometry/Pose Estimation
-- Communication between V5 Brain and Jetson Nano
-
-## Roadmap
-
-- Fusion between Visual Pose Estimation and Wheel Odometry
-- Object Detection and Gridded Permanence systenm
-- Moving between Point A and Point B
-- Documentation
-- Detecting other robots that impede the path of the robot, and drive around
-- Virtual Highway system
-
-## Installation for V5 Brain
-
-On your computer (separate device) Install VSCode
-
-Install "VEX Robotics" Extension in VSCode
-
-Installing Whooplib VEXCode (On your computer):
-
-```bash
-  cd Desktop
-
-  git clone https://github.com/ConnorAtmos/WhoopLibVEXCode
-```
-
 ## Installation for Jetson Nano
 
 [Instructions to build Vision Tesseract for Jetson Nano from Source](https://docs.google.com/document/d/1R466WGGEFfLnCq74Ui_tFQveaQ1RHnSQTE2j4t9e8I4/edit?usp=sharing)
@@ -73,12 +44,6 @@ Run the following to update to the latest version of the WhoopLibPython and rebo
 
   sudo reboot now
 ```
-
-
-## Documentation
-
-The Documentation is planned to be developed. Will be updated upon creation.
-
 
 ## Acknowledgements
 
