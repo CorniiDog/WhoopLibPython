@@ -11,7 +11,7 @@
 
 The most advanced SLAM solution in VEX.
 
-**Jetson-Nano Source Code**
+**Vision Tesseract Python Source Code**
 
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
