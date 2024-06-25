@@ -1,7 +1,27 @@
+![WhoopLib Logo](/include/whooplib/images/WhoopLibWhite.png)
 
-## Installation
+<!-- PROJECT SHIELDS -->
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
-[Instructions on setting up your Jetson Nano](https://docs.google.com/document/d/1Zwriuj1YhczBsMVh11xQKaoRo1WXXvaLQYEdnHrO4jg/edit?usp=sharing)
+The most advanced SLAM solution in VEX.
+
+WhoopLibVEXCode: https://github.com/ConnorAtmos/WhoopLibVEXCode
+WhoopLibPython: https://github.com/ConnorAtmos/WhoopLibPython
+
+
+## Installation for V5 Brain
 
 On your computer (separate device) Install VSCode
 
@@ -15,22 +35,79 @@ Installing Whooplib VEXCode (On your computer):
   git clone https://github.com/ConnorAtmos/WhoopLibVEXCode
 ```
 
-Installing Whooplib Python (SSH On your Jetson Nano via "ssh jetson@ip"):
+## Installation for Jetson Nano
+
+Installing Whooplib Python (SSH On your Jetson Nano via "ssh jetson@your_jetson_ip"):
+
+[Instructions to build Vision Tesseract for Jetson Nano from Source](https://docs.google.com/document/d/1R466WGGEFfLnCq74Ui_tFQveaQ1RHnSQTE2j4t9e8I4/edit?usp=sharing)
+
+SSH into your jetson nano via "```ssh jetson@your_jetson_ip````"
+
+Password should be "```jetson```"
+
+Run the following to update to the latest version of the WhoopLibPython and reboot.
 
 ```bash
-  cd ~/Desktop
+  cd ~/Desktop/WhoopLibPython
 
-  mkdir WhoopLibPython
+  git fetch
 
-  git clone https://github.com/ConnorAtmos/WhoopLibPython
+  git pull
+
+  sudo reboot now
 ```
 
-Modify the whooplibpython.service if necessary, then after:
 
-```bash
-  sudo cp whooplibpython.service /etc/systemd/system/whooplibpython.service
+## Documentation
 
-  sudo systemctl enable whooplibpython.service 
+The Documentation is planned to be developed. Will be updated upon creation.
 
-  sudo systemctl restart whooplibpython.service
-```
+
+## Acknowledgements
+
+ - [E-Bots πLons](http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf)
+ - [Librealsense](https://github.com/IntelRealSense/librealsense)
+ - [VEX Robotics](https://github.com/VEX-Robotics-AI)
+
+
+## Features
+
+- Visual Odometry/Pose Estimation
+- Wheel Odometry/Pose Estimation
+- Communication between V5 Brain and Jetson Nano
+
+
+## Roadmap
+
+- Fusion between Visual Pose Estimation and Wheel Odometry
+- Object Detection and Gridded Permanence systenm
+- Moving between Point A and Point B
+- Documentation
+- Detecting other robots that impede the path of the robot, and drive around
+- Virtual Highway system
+
+<!-- LICENSE -->
+## License
+
+Distributed under the [MIT](https://choosealicense.com/licenses/mit/) License.
+
+<!-- CONTACT -->
+## Contact
+
+Connor White - connor.sw.personal@gmail.com
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[contributors-shield]: https://img.shields.io/github/contributors/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
+[contributors-url]: https://github.com/ConnorAtmos/WhoopLibPython/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
+[forks-url]: https://github.com/ConnorAtmos/WhoopLibPython/network/members
+[stars-shield]: https://img.shields.io/github/stars/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
+[stars-url]: https://github.com/ConnorAtmos/WhoopLibPython/stargazers
+[issues-shield]: https://img.shields.io/github/issues/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
+[issues-url]: https://github.com/ConnorAtmos/WhoopLibPython/issues
+[license-shield]: https://img.shields.io/github/license/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
+[license-url]: https://github.com/ConnorAtmos/WhoopLibPython/blob/master/LICENSE.txt
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/connor-white-38a5501a0/
+
