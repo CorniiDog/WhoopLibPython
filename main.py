@@ -72,7 +72,7 @@ def main():
 
         if "Initialize" in stripped_message:
             # Restart
-            toolbox.reboot_system()
+            toolbox.restart_subprocess()
 
         if "Reboot" in stripped_message:
             print("Rebooting")
