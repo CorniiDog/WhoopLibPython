@@ -112,7 +112,7 @@ def main():
 
     manager.start()
 
-    if 1==1: #try:
+    try:
         print("Running")
         while True:
             while(sys_lock):
@@ -131,8 +131,8 @@ def main():
             # Sleep
             time.sleep(1)
 
-    #finally: # <-- If CTRL + C
-    #    manager.stop()
+    finally: # <-- If CTRL + C
+        manager.stop()
 
 if __name__ == "__main__":
     main()
