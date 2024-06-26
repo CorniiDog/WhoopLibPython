@@ -70,6 +70,8 @@ def main():
         stripped_message = message.strip()
 
         if "Initialize" in stripped_message:
+            # Restart
+            toolbox.reboot_system()
             print("Initializing")
             if worker_started:
                 print("Shutting down running instances")
