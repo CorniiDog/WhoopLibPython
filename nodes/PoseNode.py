@@ -70,6 +70,13 @@ class PoseSystem:
             if t >= max_initialization_time:
                 break
 
+    def restart_pipeline(self, lock: threading.Lock = None):
+        if self.running:
+            self.pipeline.stop()
+            self.pipeline.start(self.cfg)
+        else:
+            self.start_pipeline(lock)
+
     def stop_pipeline(self):
         """
         This stops the streaming pipeline for the tracking camera.

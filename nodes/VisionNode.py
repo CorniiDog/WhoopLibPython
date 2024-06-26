@@ -92,6 +92,13 @@ class VisionSystem:
             time.sleep(0.1)
             if t  >= max_initialization_time:
                 break
+    
+    def restart_pipeline(self, lock: threading.Lock = None):
+        if self.running:
+            self.pipeline.stop()
+            self.pipeline.start(self.cfg)
+        else:
+            self.start_pipeline(lock)
 
     def stop_pipeline(self):
         """

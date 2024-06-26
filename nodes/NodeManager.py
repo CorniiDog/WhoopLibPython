@@ -16,4 +16,9 @@ class ComputeManager:
         for compute in self.computes:
             compute.stop_pipeline()
 
+    def restart(self):
+        for compute in self.computes:
+            compute.restart_pipeline()
+
+
     

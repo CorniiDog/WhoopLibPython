@@ -179,6 +179,10 @@ class BufferSystem:
         except Exception as e:
             print(f"Error stopping pipeline: {e}")
 
+    def restart_pipeline(self, lock: threading.Lock = None):
+        if not self.running:
+            self.start_pipeline(lock)
+
     def get_message(self, stream:str, delete_after_read=False) -> str:
         """
         Retreives message from robot, as a string, from the stream.
