@@ -12,7 +12,6 @@ import time, math
 restart_time_minutes = 120 # minutes
 
 def main():
-    toolbox.clear_recent_logs()
     # Create a manager
     manager = nodeManager.ComputeManager()
     # Node for communication with V5 Brain
@@ -71,8 +70,11 @@ def main():
         stripped_message = message.strip()
 
         if "Initialize" in stripped_message:
+            print("Requested to initialize")
             # Restart
-            toolbox.restart_subprocess()
+            #toolbox.restart_subprocess()
+            if worker_started:
+                worker.restart()
 
         if "Reboot" in stripped_message:
             print("Rebooting")
@@ -97,7 +99,7 @@ def main():
 
         if not worker_started:
             sys_lock = True
-            toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
+            toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, max_tries=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
             sys_lock = False
             worker_started = True
             print("Started working as per request by V5 Brain")
@@ -108,7 +110,7 @@ def main():
 
     manager.start()
 
-    try:
+    if 1==1: #try:
         print("Running")
         while True:
             while(sys_lock):
@@ -127,8 +129,8 @@ def main():
             # Sleep
             time.sleep(1)
 
-    finally: # <-- If CTRL + C
-        manager.stop()
+    #finally: # <-- If CTRL + C
+    #    manager.stop()
 
 if __name__ == "__main__":
     main()

@@ -29,6 +29,9 @@ def clear_recent_logs():
     sudo_path = '/usr/bin/sudo'
     journalctl_path = '/bin/journalctl'
     try:
+        # sudo journalctl --flush
+        # sudo journalctl --rotate
+        # sudo journalctl --vacuum-time=5m
         # Flush the logs
         subprocess.run([sudo_path, journalctl_path, '--flush'], check=True)
         print("Flushed logs")
@@ -50,7 +53,7 @@ def reboot_system():
     """Reboot the system."""
     sudo_path = '/usr/bin/sudo'
     try:
-        subprocess.run([sudo_path, 'reboot'], check=True)
+        subprocess.run([sudo_path, 'reboot', 'now'], check=True)
         print("System is rebooting...")
         return 0
     except subprocess.CalledProcessError as e:
@@ -93,21 +96,25 @@ def find_all_indexes(string:str, substring:str) -> List[int]:
         start += len(substring)  # Move to the next possible start position
     return indexes
 
-def reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=None):
+def reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=None, max_tries=2):
+
+    i = 0
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
     realsense_reset_failed = reset_realsense_devices(expecting_num_realsense_devices=expecting_num_realsense_devices) 
     while realsense_reset_failed:
+        if i > max_tries:
+            reboot_system()
         if messenger:
             messenger.send("Failed")
-        time.sleep(2)
         print("Realsense Devices Not Detected, Rescanning controllers")
         controllers_reset_error = reset_all_usb_controllers()
-        time.sleep(2)
+        time.sleep(1)
         if controllers_reset_error:
             print("Failed to reset all controllers. Trying again.")
+            reboot_system()
             continue
-        time.sleep(2)
         realsense_reset_failed = reset_realsense_devices(expecting_num_realsense_devices=expecting_num_realsense_devices)
+        i += 1
 
 def read_messages_from_buffer(buffer:str, start_marker:str, end_marker:str) -> List[str]:
     start_markers = find_all_indexes(buffer, start_marker)
