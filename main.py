@@ -12,6 +12,7 @@ import time, math
 restart_time_minutes = 120 # minutes
 
 def main():
+    toolbox.clear_recent_logs()
     # Create a manager
     manager = nodeManager.ComputeManager()
     # Node for communication with V5 Brain

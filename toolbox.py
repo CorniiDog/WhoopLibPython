@@ -24,10 +24,33 @@ def reset_all_usb_controllers():
         print(f"An error occurred: {e}")
         return 1
 
+def clear_recent_logs():
+    """Force log rotation and remove older entries beyond a specified time."""
+    sudo_path = '/usr/bin/sudo'
+    journalctl_path = '/usr/bin/journalctl'
+    try:
+        # Flush the logs
+        subprocess.run([sudo_path, journalctl_path, '--flush'], check=True)
+        print("Flushed logs")
+
+        # Rotate the journal logs
+        subprocess.run([sudo_path, journalctl_path, '--rotate'], check=True)
+        print("Logs rotated.")
+
+        # Vacuum logs older than 5 minutes
+        subprocess.run([sudo_path, journalctl_path, '--vacuum-time=5m'], check=True)
+        print("Old logs vacuumed, only last 5 minutes retained.")
+
+        return 0
+    except subprocess.CalledProcessError as e:
+        print(f"Error handling logs: {e}")
+        return 1
+
 def reboot_system():
     """Reboot the system."""
+    sudo_path = '/usr/bin/sudo'
     try:
-        subprocess.run(["sudo", "reboot"], check=True)
+        subprocess.run([sudo_path, 'reboot'], check=True)
         print("System is rebooting...")
         return 0
     except subprocess.CalledProcessError as e:
@@ -35,20 +58,24 @@ def reboot_system():
         return 1
 
 def restart_subprocess():
-    """Restart service."""
+    """Restart a specific service."""
+    sudo_path = '/usr/bin/sudo'
+    systemctl_path = '/usr/bin/systemctl'
+    service_name = "whooplibpython.service"
     try:
-        subprocess.run(["sudo", "systemctl", "restart", "whooplibpython.service"], check=True)
-        print("Restarting process")
+        subprocess.run([sudo_path, systemctl_path, 'restart', service_name], check=True)
+        print("Restarting service:", service_name)
         return 0
     except subprocess.CalledProcessError as e:
-        print(f"Error restarting process: {e}")
+        print(f"Error restarting service {service_name}: {e}")
         return 1
-    
+
 def shutdown_system():
     """Shut down the system."""
+    sudo_path = '/usr/bin/sudo'
     try:
-        subprocess.run(["sudo", "shutdown", "now"], check=True)
-        print("System is shutting down..")
+        subprocess.run([sudo_path, 'shutdown', 'now'], check=True)
+        print("System is shutting down...")
         return 0
     except subprocess.CalledProcessError as e:
         print(f"Error shutting down the system: {e}")
