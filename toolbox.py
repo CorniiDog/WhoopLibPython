@@ -27,7 +27,7 @@ def reset_all_usb_controllers():
 def clear_recent_logs():
     """Force log rotation and remove older entries beyond a specified time."""
     sudo_path = '/usr/bin/sudo'
-    journalctl_path = '/usr/bin/journalctl'
+    journalctl_path = '/bin/journalctl'
     try:
         # Flush the logs
         subprocess.run([sudo_path, journalctl_path, '--flush'], check=True)
@@ -60,7 +60,7 @@ def reboot_system():
 def restart_subprocess():
     """Restart a specific service."""
     sudo_path = '/usr/bin/sudo'
-    systemctl_path = '/usr/bin/systemctl'
+    systemctl_path = '/bin/systemctl'
     service_name = "whooplibpython.service"
     try:
         subprocess.run([sudo_path, systemctl_path, 'restart', service_name], check=True)
