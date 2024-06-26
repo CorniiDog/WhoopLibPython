@@ -73,11 +73,9 @@ def main():
             print("Initializing")
             if worker_started:
                 print("Shutting down running instances")
-                worker.stop()
-                time.sleep(3)
-                worker_started = False
             sys_lock = True
             toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
+            worker.restart()
             sys_lock = False
 
         if "Reboot" in stripped_message:
