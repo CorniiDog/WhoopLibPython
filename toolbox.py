@@ -33,6 +33,16 @@ def reboot_system():
     except subprocess.CalledProcessError as e:
         print(f"Error rebooting the system: {e}")
         return 1
+
+def restart_subprocess():
+    """Restart service."""
+    try:
+        subprocess.run(["sudo", "systemctl", "restart", "whooplibpython.service"], check=True)
+        print("Restarting process")
+        return 0
+    except subprocess.CalledProcessError as e:
+        print(f"Error restarting process: {e}")
+        return 1
     
 def shutdown_system():
     """Shut down the system."""
