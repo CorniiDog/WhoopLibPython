@@ -75,8 +75,8 @@ def main():
             print("Requested to initialize")
             # Restart
             #toolbox.restart_subprocess()
-            if worker_started:
-                worker.restart()
+            #if worker_started:
+            #    worker.restart()
 
         if "Reboot" in stripped_message:
             print("Rebooting")
