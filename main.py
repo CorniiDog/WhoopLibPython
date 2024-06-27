@@ -77,8 +77,8 @@ def main():
             #toolbox.restart_subprocess()
             if worker_started:
                 worker.stop()
-            time.sleep(5)
-            worker.start()
+                time.sleep(5)
+                worker.start()
 
         if "Reboot" in stripped_message:
             print("Rebooting")
