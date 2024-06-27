@@ -102,8 +102,6 @@ def reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
     realsense_reset_failed = reset_realsense_devices(expecting_num_realsense_devices=expecting_num_realsense_devices) 
     while realsense_reset_failed:
-        if i > max_tries:
-            reboot_system()
         if messenger:
             messenger.send("Failed")
         print("Realsense Devices Not Detected, Rescanning controllers")
