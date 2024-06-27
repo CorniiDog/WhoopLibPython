@@ -111,6 +111,8 @@ def reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=
         time.sleep(1)
         if controllers_reset_error:
             print("Failed to reset all controllers. Trying again.")
+            messenger.send("Rebooting")
+            time.sleep(0.3)
             reboot_system()
             continue
         realsense_reset_failed = reset_realsense_devices(expecting_num_realsense_devices=expecting_num_realsense_devices)
