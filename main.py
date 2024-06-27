@@ -82,9 +82,11 @@ def main():
 
         if "Reboot" in stripped_message:
             print("Rebooting")
+            communication_messenger.send("Rebooting Jetson")
             time.sleep(1)
             toolbox.reboot_system()
         elif "Shutdown" in stripped_message:
+            communication_messenger.send("Shutting Jetson Off")
             print("Shutting down")
             time.sleep(1)
             toolbox.shutdown_system()
