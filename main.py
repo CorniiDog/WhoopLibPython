@@ -17,7 +17,7 @@ def main():
     # Create a manager
     manager = nodeManager.ComputeManager()
     # Node for communication with V5 Brain
-    buffer_system = bufferNode.BufferSystem(max_buffer_size=256, port_search_name="VEX Robotics V5 Brain", rate=115200)
+    buffer_system = bufferNode.BufferSystem(max_buffer_size=256, port_search_name="VEX Robotics V5 Brain", rate=115200, debugMode=True)
     manager.add_compute_node(buffer_system)
 
     #######################################################
@@ -28,7 +28,7 @@ def main():
     worker = nodeManager.ComputeManager()
 
     # Node for T265 Pose (the base)
-    t265_pose = poseNode.PoseSystem()
+    t265_pose = poseNode.PoseSystem(debugMode=True)
     worker.add_compute_node(t265_pose)
     
 
@@ -65,24 +65,25 @@ def main():
 
     sys_lock = False
 
+    reset_run_once = False
     def message_received(message:str):
         nonlocal countdown_timer
         nonlocal worker_started
         nonlocal sys_lock
+        nonlocal reset_run_once
         stripped_message = message.strip()
 
         if "Initialize" in stripped_message:
             print("Requested to initialize")
             # Restart
-            #toolbox.restart_subprocess()
-            #exit()
-            if worker_started:
-                communication_messenger.send("ReInitializing")
-                worker.stop()
-                time.sleep(2)
-                worker.start()
-            else:
-                communication_messenger.send("Initializing")
+            # if worker_started:
+            #    communication_messenger.send("ReInitializing")
+            #    worker.stop()
+            #    time.sleep(2)
+            #    worker.start()
+            # else:
+            #    communication_messenger.send("Initializing")
+            communication_messenger.send("Initializing")
 
         if "Reboot" in stripped_message:
             print("Rebooting")
@@ -94,6 +95,10 @@ def main():
             print("Shutting down")
             time.sleep(1)
             toolbox.shutdown_system()
+        elif "RestartProcess" in stripped_message:
+            communication_messenger.send("Restarting process")
+            time.sleep(1)
+            toolbox.restart_subprocess()
 
         try:
             asked_time = int(stripped_message.split(" ")[0])
@@ -108,11 +113,13 @@ def main():
         countdown_timer = asked_time
 
         if not worker_started:
-            sys_lock = True
-            toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, max_tries=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
-            sys_lock = False
-            worker_started = True
+            if not reset_run_once:
+                reset_run_once = True
+                sys_lock = True
+                toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, max_tries=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
+                sys_lock = False
             print("Started working as per request by V5 Brain")
+            worker_started = True
             worker.start()
 
     communication_messenger.on_message(message_received)
@@ -140,9 +147,9 @@ def main():
                 # Sleep
                 time.sleep(1)
             except Exception as e:
-                print(e)
-                time.sleep(0.01)
-                continue
+               print(e)
+               time.sleep(0.01)
+               continue
 
     finally: # <-- If CTRL + C
         manager.stop()
