@@ -17,7 +17,7 @@ def main():
     # Create a manager
     manager = nodeManager.ComputeManager()
     # Node for communication with V5 Brain
-    buffer_system = bufferNode.BufferSystem(max_buffer_size=256, port_search_name="VEX Robotics V5 Brain", rate=115200, debugMode=True)
+    buffer_system = bufferNode.BufferSystem(max_buffer_size=256, port_search_name="VEX Robotics V5 Brain", rate=115200)
     manager.add_compute_node(buffer_system)
 
     #######################################################
@@ -28,7 +28,7 @@ def main():
     worker = nodeManager.ComputeManager()
 
     # Node for T265 Pose (the base)
-    t265_pose = poseNode.PoseSystem(debugMode=True)
+    t265_pose = poseNode.PoseSystem()
     worker.add_compute_node(t265_pose)
     
 
