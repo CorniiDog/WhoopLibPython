@@ -75,6 +75,7 @@ def main():
             print("Requested to initialize")
             # Restart
             toolbox.restart_subprocess()
+            exit()
             #if worker_started:
             #    worker.stop()
             #    time.sleep(5)
