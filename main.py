@@ -74,12 +74,15 @@ def main():
         if "Initialize" in stripped_message:
             print("Requested to initialize")
             # Restart
-            toolbox.restart_subprocess()
-            exit()
-            #if worker_started:
-            #    worker.stop()
-            #    time.sleep(5)
-            #    worker.start()
+            #toolbox.restart_subprocess()
+            #exit()
+            if worker_started:
+                communication_messenger.send("ReInitializing")
+                worker.stop()
+                time.sleep(2)
+                worker.start()
+            else:
+                communication_messenger.send("Initializing")
 
         if "Reboot" in stripped_message:
             print("Rebooting")
