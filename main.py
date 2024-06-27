@@ -123,21 +123,26 @@ def main():
     try:
         print("Running")
         while True:
-            while(sys_lock):
-                time.sleep(0.1)
-            countdown_timer -= 1
+            try:
+                while(sys_lock):
+                    time.sleep(0.1)
+                countdown_timer -= 1
 
-            if countdown_timer < 0:
-                if worker_started:
-                    print("Stopped working as no keep-alive from V5 Brain")
-                    worker.stop()
-                    worker_started = False
+                if countdown_timer < 0:
+                    if worker_started:
+                        print("Stopped working as no keep-alive from V5 Brain")
+                        worker.stop()
+                        worker_started = False
 
-                # Reboot system every x minutes to clear memory leaks
-                if (-countdown_timer) > restart_time_minutes*60:
-                    toolbox.reboot_system()
-            # Sleep
-            time.sleep(1)
+                    # Reboot system every x minutes to clear memory leaks
+                    if (-countdown_timer) > restart_time_minutes*60:
+                        toolbox.reboot_system()
+                # Sleep
+                time.sleep(1)
+            except Exception as e:
+                print(e)
+                time.sleep(0.01)
+                continue
 
     finally: # <-- If CTRL + C
         manager.stop()
