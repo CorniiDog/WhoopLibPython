@@ -76,14 +76,11 @@ def main():
         if "Initialize" in stripped_message:
             print("Requested to initialize")
             # Restart
-            # if worker_started:
-            #    communication_messenger.send("ReInitializing")
-            #    worker.stop()
-            #    time.sleep(2)
-            #    worker.start()
-            # else:
-            #    communication_messenger.send("Initializing")
-            communication_messenger.send("Initializing")
+            if worker_started:
+               communication_messenger.send("ReInitializing")
+               worker.restart()
+            else:
+               communication_messenger.send("Initializing")
 
         if "Reboot" in stripped_message:
             print("Rebooting")
