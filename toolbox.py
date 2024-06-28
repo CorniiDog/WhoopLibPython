@@ -193,9 +193,12 @@ def get_position_and_euler(p):
 
     # Convert quaternion to Euler angles
     rotation = R.from_quat([p.rotation.x, p.rotation.y, p.rotation.z, p.rotation.w])
-    euler_angles = rotation.as_euler('xyz', degrees=False)  # Convert to degrees if required
-    
-    return {'position': (x, y, z), 'euler_angles': euler_angles}
+    euler_angles = rotation.as_euler('zyx', degrees=False)  # Returns yaw, pitch, roll
+
+    # Reorder to pitch, yaw, roll
+    pitch, yaw, roll = euler_angles[1], euler_angles[0], euler_angles[2]
+
+    return {'position': (x, y, z), 'euler_angles': (pitch, yaw, roll)}
 
 
 def reset_realsense_devices(expecting_num_realsense_devices=2) -> bool:
