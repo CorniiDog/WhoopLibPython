@@ -82,7 +82,7 @@ class PoseSystem:
                 for line in f:
                     for c in line:
                         chars.append(ord(c))  # char to uint8
-                self.wheel_odometer.load_wheel_odometry_config(chars)
+                self.wheel_odometer.load_wheel_odometery_config(chars)
 
         self.running = True
 
