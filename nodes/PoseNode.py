@@ -67,6 +67,8 @@ class PoseSystem:
             return
 
         self.pipeline.start(self.cfg)
+        self.device = self.pipeline.get_active_profile().get_device()
+        self.odom_sensor = self.device.first_wheel_odometer()
         self.running = True
 
         if lock:
@@ -107,6 +109,8 @@ class PoseSystem:
             self.running = False
             self.pipeline.stop()
             self.pipeline.start(self.cfg)
+            self.device = self.pipeline.get_active_profile().get_device()
+            self.odom_sensor = self.device.first_wheel_odometer()
             self.running = True
         else:
             self.start_pipeline(lock)
