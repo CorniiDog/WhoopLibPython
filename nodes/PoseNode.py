@@ -26,12 +26,18 @@ class PoseSystem:
         self.debugMode = debugMode
         self.OffsetTransforms = []
         self.errorRunOnce = False
-        self.device = self.pipeline.get_active_profile().get_device()
-        self.odom_sensor = self.device.first_wheel_odometer()
+        self.device = None
+        self.odom_sensor = None
 
         serial_odom_messenger.on_message(self.send_wheel_odometry)
 
     def send_wheel_odometry(self, data:str):
+        if not self.running:
+            return
+        if not self.device:
+            self.device = self.pipeline.get_active_profile().get_device()
+        if not self.odom_sensor:
+            self.odom_sensor = self.device.first_wheel_odometer()
         # data = "x z yaw"
         x, z, yaw = map(float, data.split())
 
@@ -51,6 +57,7 @@ class PoseSystem:
 
         # Send the wheel odometry data to the T265
         self.odom_sensor.send_wheel_odometry(0, 0, wo_data)
+        print("Wheel odometry sent")
 
     def start_pipeline(self, lock: threading.Lock = None):
         """
@@ -58,9 +65,9 @@ class PoseSystem:
         """
         if self.running:
             return
-        self.running = True
 
         self.pipeline.start(self.cfg)
+        self.running = True
 
         if lock:
             self.lock = lock
@@ -97,8 +104,10 @@ class PoseSystem:
 
     def restart_pipeline(self, lock: threading.Lock = None):
         if self.running:
+            self.running = False
             self.pipeline.stop()
             self.pipeline.start(self.cfg)
+            self.running = True
         else:
             self.start_pipeline(lock)
 
