@@ -36,18 +36,18 @@ class PoseSystem:
         x, z, yaw = map(float, data.split())
 
         # Convert yaw (angle) to quaternion
-        cos_half_yaw = np.cos(yaw / 2)
-        sin_half_yaw = np.sin(yaw / 2)
+        cy = np.cos(yaw * 0.5) # cosine yaw
+        sy = np.sin(yaw * 0.5) # sine yaw
 
         # Create pose data in RealSense format
         wo_data = rs.pose()
         wo_data.translation.x = x  # Lateral movement
         wo_data.translation.y = 0.0  # Assuming no vertical movement
         wo_data.translation.z = z  # Forward/Backward movement
-        wo_data.rotation.w = cos_half_yaw
+        wo_data.rotation.w = cy
         wo_data.rotation.x = 0.0
-        wo_data.rotation.y = 0.0
-        wo_data.rotation.z = sin_half_yaw
+        wo_data.rotation.y = sy
+        wo_data.rotation.z = 0.0
 
         # Send the wheel odometry data to the T265
         self.odom_sensor.send_wheel_odometry(0, 0, wo_data)
