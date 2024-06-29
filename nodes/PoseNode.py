@@ -26,8 +26,10 @@ class PoseSystem:
         self.debugMode = debugMode
         self.OffsetTransforms = []
         self.errorRunOnce = False
-        self.device = None
-        self.odom_sensor = None
+        self.pose_sensor = None
+        self.wheel_odometer = None
+        self.frame_number = 0
+        self.profile = None
 
         serial_odom_messenger.on_message(self.send_wheel_odometry)
 
@@ -56,8 +58,8 @@ class PoseSystem:
         wo_data.rotation.z = 0.0
 
         # Send the wheel odometry data to the T265
-        self.odom_sensor.send_wheel_odometry(0, 0, wo_data)
-        print("Wheel odometry sent")
+        self.odom_sensor.send_wheel_odometry(0, self.frame_number, wo_data)
+        print("Wheel odometry received")
 
     def start_pipeline(self, lock: threading.Lock = None):
         """
@@ -66,7 +68,8 @@ class PoseSystem:
         if self.running:
             return
 
-        self.pipeline.start(self.cfg)
+        self.profile = self.pipeline.start(self.cfg)
+        
         self.device = self.pipeline.get_active_profile().get_device()
         self.odom_sensor = self.device.first_wheel_odometer()
         self.running = True
@@ -162,6 +165,8 @@ class PoseSystem:
         pose_frame = frames.get_pose_frame()
         if not pose_frame:
             return
+
+        self.frame_number = pose_frame.get_frame_number()
 
         pose = pose_frame.get_pose_data()
 
