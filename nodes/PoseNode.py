@@ -73,12 +73,16 @@ class PoseSystem:
         self.device = self.pipeline.get_active_profile().get_device().as_tm2()
         self.pose_sensor = self.device.first_pose_sensor()
 
+        
+
         if self.pose_sensor:
             self.wheel_odometer = self.pose_sensor.as_wheel_odometer()
             with open('t265_calibration.json', 'r') as f:
-                calibration_data = json.load(f)
-                calibration_json = json.dumps(calibration_data)
-                self.wheel_odometer.load_wheel_odometry_config(bytearray(calibration_json, 'utf-8'))
+                chars = []
+                for line in f:
+                    for c in line:
+                        chars.append(ord(c))  # char to uint8
+                self.wheel_odometer.load_wheel_odometry_config(chars)
 
         self.running = True
 
