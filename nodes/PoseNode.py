@@ -70,12 +70,8 @@ class PoseSystem:
             return
 
         self.profile = self.pipeline.start(self.cfg)
-        self.device = self.pipeline.get_active_profile().get_device()
-
-        for sensor in self.device.sensors:
-            if sensor.get_stream_profiles()[0].stream_type() == rs.stream.pose:
-                self.pose_sensor = sensor
-                break
+        self.device = self.pipeline.get_active_profile().get_device().as_tm2()
+        self.pose_sensor = self.device.first_pose_sensor()
 
         if self.pose_sensor:
             self.wheel_odometer = self.pose_sensor.as_wheel_odometer()
