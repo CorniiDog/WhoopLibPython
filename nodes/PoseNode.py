@@ -12,7 +12,7 @@ max_initialization_time = 3
 
 
 class PoseSystem:
-    def __init__(self, debugMode=False):
+    def __init__(self, serial_odom_messenger:bufferNode.Messenger, debugMode=False):
         """
         Initializes configurations for pose estimation
         """
@@ -26,6 +26,31 @@ class PoseSystem:
         self.debugMode = debugMode
         self.OffsetTransforms = []
         self.errorRunOnce = False
+        self.device = self.pipeline.get_active_profile().get_device()
+        self.odom_sensor = self.device.first_wheel_odometer()
+
+        serial_odom_messenger.on_message(self.send_wheel_odometry)
+
+    def send_wheel_odometry(self, data:str):
+        # data = "x z yaw"
+        x, z, yaw = map(float, data.split())
+
+        # Convert yaw (angle) to quaternion
+        cos_half_yaw = np.cos(yaw / 2)
+        sin_half_yaw = np.sin(yaw / 2)
+
+        # Create pose data in RealSense format
+        wo_data = rs.pose()
+        wo_data.translation.x = x  # Lateral movement
+        wo_data.translation.y = 0.0  # Assuming no vertical movement
+        wo_data.translation.z = z  # Forward/Backward movement
+        wo_data.rotation.w = cos_half_yaw
+        wo_data.rotation.x = 0.0
+        wo_data.rotation.y = 0.0
+        wo_data.rotation.z = sin_half_yaw
+
+        # Send the wheel odometry data to the T265
+        self.odom_sensor.send_wheel_odometry(0, 0, wo_data)
 
     def start_pipeline(self, lock: threading.Lock = None):
         """

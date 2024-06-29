@@ -27,8 +27,11 @@ def main():
     # Create a worker for the manager
     worker = nodeManager.ComputeManager()
 
+    # Messenger to retreive data from odom wheel
+    odom_receiver = bufferNode.Messenger(buffer_system, stream="O")
+
     # Node for T265 Pose (the base)
-    t265_pose = poseNode.PoseSystem()
+    t265_pose = poseNode.PoseSystem(serial_odom_messenger=odom_receiver)
     worker.add_compute_node(t265_pose)
     
 
