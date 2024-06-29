@@ -8,6 +8,7 @@ from scipy.spatial.transform import Rotation as R
 import calculators.OffsetTransform as offsetCalculator
 import nodes.BufferNode as bufferNode
 import toolbox
+import json
 max_initialization_time = 3
 
 
@@ -37,9 +38,9 @@ class PoseSystem:
         if not self.running:
             return
         if not self.device:
-            self.device = self.pipeline.get_active_profile().get_device()
+            return
         if not self.odom_sensor:
-            self.odom_sensor = self.device.first_wheel_odometer()
+            return
         # data = "x z yaw"
         x, z, yaw = map(float, data.split())
 
@@ -69,9 +70,20 @@ class PoseSystem:
             return
 
         self.profile = self.pipeline.start(self.cfg)
-        
         self.device = self.pipeline.get_active_profile().get_device()
-        self.odom_sensor = self.device.first_wheel_odometer()
+
+        for sensor in self.device.sensors:
+            if sensor.get_stream_profiles()[0].stream_type() == rs.stream.pose:
+                self.pose_sensor = sensor
+                break
+
+        if self.pose_sensor:
+            self.wheel_odometer = self.pose_sensor.as_wheel_odometer()
+            with open('no_offset_calibration.json', 'r') as f:
+                calibration_data = json.load(f)
+                calibration_json = json.dumps(calibration_data)
+                self.wheel_odometer.load_wheel_odometry_config(bytearray(calibration_json, 'utf-8'))
+
         self.running = True
 
         if lock:
