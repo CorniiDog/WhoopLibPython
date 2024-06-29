@@ -42,25 +42,23 @@ class PoseSystem:
             return
 
         # data = "x z yaw"
-        x, z, yaw = map(float, data.split())
+        # Assuming x and z are the components of translational velocity along the respective axes
+        # and yaw is not needed for translational velocity calculation directly
+        delta_x, delta_z, yaw = map(float, data.split())
 
-        # Convert yaw (angle) to quaternion
-        cy = np.cos(yaw * 0.5)  # cosine yaw
-        sy = np.sin(yaw * 0.5)  # sine yaw
-
-        # Create pose data in RealSense format
-        wo_data = rs.pose()
-        wo_data.translation.x = x  # Lateral movement
-        wo_data.translation.y = 0.0  # Assuming no vertical movement
-        wo_data.translation.z = z  # Forward/Backward movement
-        wo_data.rotation.w = cy
-        wo_data.rotation.x = 0.0
-        wo_data.rotation.y = sy
-        wo_data.rotation.z = 0.0
+        # Create a vector for translational velocity
+        translational_velocity = rs.vector()
+        translational_velocity.x = delta_x  # Velocity along the x-axis
+        translational_velocity.y = 0.0  # Assuming no vertical movement velocity
+        translational_velocity.z = delta_z  # Velocity along the z-axis
 
         # Send the wheel odometry data to the T265
-        self.wheel_odometer.send_wheel_odometry(0, self.frame_number, wo_data)
-        print("Wheel odometry received")
+        result = self.wheel_odometer.send_wheel_odometry(0, self.frame_number, translational_velocity)
+        if self.debugMode:
+            if result:
+                print("Wheel odometry successfully sent for frame number:", self.frame_number)
+            else:
+                print("Failed to send wheel odometry.")
 
     def start_pipeline(self, lock: threading.Lock = None):
         """
