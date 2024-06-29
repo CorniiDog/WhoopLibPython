@@ -27,7 +27,7 @@ class PoseSystem:
         self.debugMode = debugMode
         self.OffsetTransforms = []
         self.errorRunOnce = False
-        self.pose_sensor = None
+        self.odom_sensor = None
         self.wheel_odometer = None
         self.frame_number = 0
         self.profile = None
@@ -37,16 +37,16 @@ class PoseSystem:
     def send_wheel_odometry(self, data:str):
         if not self.running:
             return
-        if not self.device:
+        if not self.wheel_odometer:
+            print("Wheel odometry sensor not initialized.")
             return
-        if not self.odom_sensor:
-            return
+
         # data = "x z yaw"
         x, z, yaw = map(float, data.split())
 
         # Convert yaw (angle) to quaternion
-        cy = np.cos(yaw * 0.5) # cosine yaw
-        sy = np.sin(yaw * 0.5) # sine yaw
+        cy = np.cos(yaw * 0.5)  # cosine yaw
+        sy = np.sin(yaw * 0.5)  # sine yaw
 
         # Create pose data in RealSense format
         wo_data = rs.pose()
@@ -59,7 +59,7 @@ class PoseSystem:
         wo_data.rotation.z = 0.0
 
         # Send the wheel odometry data to the T265
-        self.odom_sensor.send_wheel_odometry(0, self.frame_number, wo_data)
+        self.wheel_odometer.send_wheel_odometry(0, self.frame_number, wo_data)
         print("Wheel odometry received")
 
     def start_pipeline(self, lock: threading.Lock = None):
