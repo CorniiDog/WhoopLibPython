@@ -75,7 +75,7 @@ class PoseSystem:
 
         if self.pose_sensor:
             self.wheel_odometer = self.pose_sensor.as_wheel_odometer()
-            with open('no_offset_calibration.json', 'r') as f:
+            with open('t265_calibration.json', 'r') as f:
                 calibration_data = json.load(f)
                 calibration_json = json.dumps(calibration_data)
                 self.wheel_odometer.load_wheel_odometry_config(bytearray(calibration_json, 'utf-8'))
