@@ -255,7 +255,7 @@ class Messenger:
         position, rotation = pose_euler["position"], pose_euler["euler_angles"]
         x, y, z = position[0], position[1], position[2]
         pitch, yaw, roll = rotation[0], rotation[1], rotation[2]
-
+        print(x, z)
         if max_decimals >= 0:
             self.send(f"{x:.{max_decimals}f} {y:.{max_decimals}f} {z:.{max_decimals}f} {pitch:.{max_decimals}f} {yaw:.{max_decimals}f} {roll:.{max_decimals}f} {confidence}")
         else:

@@ -1,4 +1,4 @@
-![WhoopLib Logo](/images/WhoopLibWhite.png)
+![WhoopLib Logo](/.img/WhoopLibPythonLogo.png)
 
 <!-- PROJECT SHIELDS -->
 <!--
@@ -19,20 +19,15 @@ The most advanced SLAM solution in VEX.
 [![Issues][issues-shield]][issues-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-## Project Links
+## Links
 
-Documentation: https://connoratmos.github.io/WhoopLibVEXCode/#/
+[WhoopLib Documentation](https://connoratmos.github.io/WhoopLib/)
 
-WhoopLibVEXCode Github: https://github.com/ConnorAtmos/WhoopLibVEXCode
+[WhoopLib Zero - Learn C++ From Zero](https://connoratmos.github.io/WhoopLibZero/)
 
-WhoopLibPython Github: https://github.com/ConnorAtmos/WhoopLibPython
+[WhoopLibVEXCode Github](https://github.com/ConnorAtmos/WhoopLibVEXCode)
 
-## Acknowledgements
-
- - [E-Bots πLons](http://thepilons.ca/wp-content/uploads/2018/10/Tracking.pdf)
- - [Librealsense](https://github.com/IntelRealSense/librealsense)
- - [VEX Robotics](https://github.com/VEX-Robotics-AI)
-
+[WhoopLibPython Github](https://github.com/ConnorAtmos/WhoopLibPython)
 <!-- LICENSE -->
 ## License
 
