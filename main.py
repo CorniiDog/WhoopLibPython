@@ -32,7 +32,7 @@ def main():
 
     # If using D435i and T265, set to 2
     # If using just D435i, set to 1
-    num_realsense_devices = 2
+    num_realsense_devices = 1
 
     # Object Detection Node Configured for D435i (NOT the D435 w/o the i)
     # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
