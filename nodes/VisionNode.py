@@ -6,13 +6,14 @@ import threading
 import time
 import copy
 import nodes.PoseNode as pn
+import nodes.BufferNode as bn
 from scipy.spatial.transform import Rotation as R
 
 
 max_initialization_time = 3 # seconds
 
 class VisionSystem:
-    def __init__(self, pose_node, version:str="yolov5n", confidence_minimum:float=0.3, enable_laser=False, debugMode=False, width=640, height=480, fps=6):
+    def __init__(self, version:str="yolov5n", confidence_minimum:float=0.3, enable_laser=False, debugMode=False, width=640, height=480, fps=6):
         """
         Initializes configurations for object detection
         """
@@ -40,10 +41,18 @@ class VisionSystem:
         self.running = False
         self.confidence_min = confidence_minimum
         self.laser_enabled = enable_laser
-        self.pose = pose_node
         self.debugMode = debugMode
+        self.errorRunOnce = False
 
         self.cv2_window_created = False  # Flag to track if OpenCV window is created
+
+        self.messenger:bn.Messenger = None
+        self.messenger_max_decimals = 5
+
+    def register_update_stream(self, messenger, max_decimals=5):
+        self.messenger = messenger
+        self.messenger_max_decimals = max_decimals
+
         
     def start_pipeline(self, lock:threading.Lock=None):
         """
@@ -76,8 +85,11 @@ class VisionSystem:
                 else:
                     try:
                         self.__step()
+                        self.errorRunOnce = False
                     except Exception as e:
-                        print(f"Thread Pose Estimation: Error occurred - {e}. Restarting thread.")
+                        if not self.errorRunOnce:
+                            self.errorRunOnce = True
+                            print(f"Vision System: Error occurred - {e}. Restarting thread.")
                         continue
                 if not self.first_pass:
                     self.first_pass = True
@@ -126,19 +138,6 @@ class VisionSystem:
             except Exception as e:
                 print(f"Error destroying OpenCV windows: {e}")
 
-
-    def __world_pos_from_pose(self, p, r, x_relative, y_relative, z_relative):
-
-        local_vector = [x_relative, y_relative, z_relative]
-        rotated_vector = r.apply(local_vector)
-
-        # Translate rotated coordinates to world space
-        world_x = rotated_vector[0] + p.translation.x
-        world_y = rotated_vector[1] + p.translation.y
-        world_z = rotated_vector[2] + p.translation.z
-
-        return world_x, world_y, world_z
-
     def __step(self):
         """
         This steps the system and creates self.objects which is the result of the computational assembly. Also outputs self.depth_image and self.color_image
@@ -167,8 +166,7 @@ class VisionSystem:
         # Get bounding boxes
         boxes = results.xyxy[0].cpu().numpy()
 
-        p = self.pose.get_pose() # Get pose of camera
-        r = R.from_quat([p.rotation.x, p.rotation.y, p.rotation.z, p.rotation.w])
+        send_str = ""
 
         objects = []
         for box in boxes:
@@ -187,10 +185,16 @@ class VisionSystem:
             y *= -1
             z *= -1
 
-            wx, wy, wz = self.__world_pos_from_pose(p, r, x, y, z)
+            if self.messenger:
+                max_d = self.messenger_max_decimals
+                send_str += f"[obj][n]{self.names[int(cls_id)]}[/n][x]{x:.{max_d}f}[/x][y]{-y:.{max_d}f}[/y][z]{-z:.{max_d}f}[/z][d]{distance:.{max_d}f}[/d][c]{conf:.{max_d}f}[/c][/obj]"
 
-            object = {"name": self.names[int(cls_id)], "boundingbox":{"x1":x1, "x2":x2, "y1":y1, "y2":y2}, "boundingboxcenter":{"x":cx, "y":cy}, "localposition":{"lx": x, "ly": -y, "lz": -z}, "x":wx, "y":wy, "z":wz, "distance":distance, "confidence": conf}
+            object = {"name": self.names[int(cls_id)], "boundingbox":{"x1":x1, "x2":x2, "y1":y1, "y2":y2}, "boundingboxcenter":{"x":cx, "y":cy}, "localposition":{"lx": x, "ly": -y, "lz": -z}, "distance":distance, "confidence": conf}
             objects.append(object)
+        if self.messenger:
+            self.messenger.send(send_str) # Send objects over to the V5 Brain
+
+        
         
         # Lock and update variables
         with self.lock:

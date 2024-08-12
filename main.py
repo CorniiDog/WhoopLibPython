@@ -1,6 +1,6 @@
 import usb_resetter.usb_resetter
 import nodes.PoseNode as poseNode
-#import nodes.VisionNode as visionNode
+import nodes.VisionNode as visionNode
 import nodes.NodeManager as nodeManager
 import nodes.BufferNode as bufferNode
 import calculators.OffsetTransform as offsetCalculator
@@ -30,41 +30,47 @@ def main():
     # Messenger to retreive data from odom wheel
     odom_receiver = bufferNode.Messenger(buffer_system, stream="O")
 
-    # Node for T265 Pose (the base)
-    t265_pose = poseNode.PoseSystem(serial_odom_messenger=odom_receiver)
-    worker.add_compute_node(t265_pose)
+    # If using D435i and T265, set to 2
+    # If using just D435i, set to 1
+    num_realsense_devices = 1
+
+    # Object Detection Node Configured for D435i (NOT the D435 w/o the i)
+    # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
+    vision = visionNode.VisionSystem(version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
+    worker.add_compute_node(vision)
+
+    # If number is 2 (implying we also have T265)
+    if num_realsense_devices == 2:
+        # Node for T265 Pose (the base)
+        t265_pose = poseNode.PoseSystem(serial_odom_messenger=odom_receiver)
+        worker.add_compute_node(t265_pose)
     
 
-    # This is for retreiving the pose of the d435i camera as an offset of the T265 transformation (in meters)
-    # This of an x y z offset relative to the T265 camera (rigidly attached)
-    # If the camera is slightly forward than the T265, then it would be in the -pz direction (meters)
-    # If camera is slightly up, it would be in the +py direction (meters)
-    # If camera is slightly right, it would be in +px direction (meters)
-    # Image of the transformation origins: https://files.readme.io/29080d9-Tracking_Depth_fixture_image.png
-    d43i_pose = offsetCalculator.OffsetTransform(t265_pose, px=-16/1000, py=36.40/1000, pz=-4/1000) 
+        # This is the pose messenger system for the V5 Brain's Serial Connection.
+        pose_messenger = bufferNode.Messenger(buffer_system, stream="P")
 
-    # This is the pose messenger system for the V5 Brain's Serial Connection.
-    pose_messenger = bufferNode.Messenger(buffer_system, stream="P")
+        # Register to send the t265 pose to the robot
+        t265_pose.register_self_transform_stream(messenger=pose_messenger, max_decimals=5)
 
-    # Register to send the t265 pose to the robot
-    t265_pose.register_self_transform_stream(messenger=pose_messenger, max_decimals=5)
-
-    # Object node
-    # Note: Enabling laser (laser projection) may cause interference w/ another robot's Realsense camera. Recommended to stay disabled.
-    #vision = visionNode.VisionSystem(d43i_pose, version="yolov5n", confidence_minimum=0.2, enable_laser=False, width=640, height=480, fps=6)
-    #worker.add_compute_node(vision)
     
     #######################################################
     # Communication and control of Vision System
     #######################################################
-    countdown_timer = 0
-    worker_started = False
 
     communication_messenger = bufferNode.Messenger(buffer_system, stream="C", deleteAfterRead=True)
 
+    # This is the pose messenger system for the V5 Brain's Serial Connection.
+    object_messenger = bufferNode.Messenger(buffer_system, stream="B")
+    vision.register_update_stream(messenger=object_messenger, max_decimals=5)
+
+    #######################################################
+    # Communication Establishment and Manager Protocol
+    #######################################################
     # Protocol for resetting Realsense USB devices and also protocol for re-scanning USB devices
     # We input that we expect n devices and should try to reset them. If we cannot find n devices, restart/power cycle all USB controllers until we do.
     #toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
+    countdown_timer = 0
+    worker_started = False
 
     sys_lock = False
 
@@ -116,7 +122,7 @@ def main():
             if not reset_run_once:
                 reset_run_once = True
                 sys_lock = True
-                toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=2, max_tries=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
+                toolbox.reset_and_initialize_realsense(expecting_num_realsense_devices=num_realsense_devices, max_tries=2, messenger=communication_messenger) # We provide the messenger to send "Failed" if failed
                 sys_lock = False
             print("Started working as per request by V5 Brain")
             worker_started = True
