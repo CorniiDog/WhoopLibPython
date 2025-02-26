@@ -21,13 +21,13 @@ The most advanced SLAM solution in VEX.
 
 ## Links
 
-[WhoopLib Documentation](https://connoratmos.github.io/WhoopLib/)
+[WhoopLib Documentation](https://CorniiDog.github.io/WhoopLib/)
 
-[WhoopLib Zero - Learn C++ From Zero](https://connoratmos.github.io/WhoopLibZero/)
+[WhoopLib Zero - Learn C++ From Zero](https://CorniiDog.github.io/WhoopLibZero/)
 
-[WhoopLibVEXCode Github](https://github.com/ConnorAtmos/WhoopLibVEXCode)
+[WhoopLibVEXCode Github](https://github.com/CorniiDog/WhoopLibVEXCode)
 
-[WhoopLibPython Github](https://github.com/ConnorAtmos/WhoopLibPython)
+[WhoopLibPython Github](https://github.com/CorniiDog/WhoopLibPython)
 <!-- LICENSE -->
 ## License
 
@@ -40,16 +40,16 @@ Connor White - connor.sw.personal@gmail.com
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[contributors-url]: https://github.com/ConnorAtmos/WhoopLibPython/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[forks-url]: https://github.com/ConnorAtmos/WhoopLibPython/network/members
-[stars-shield]: https://img.shields.io/github/stars/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[stars-url]: https://github.com/ConnorAtmos/WhoopLibPython/stargazers
-[issues-shield]: https://img.shields.io/github/issues/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[issues-url]: https://github.com/ConnorAtmos/WhoopLibPython/issues
-[license-shield]: https://img.shields.io/github/license/ConnorAtmos/WhoopLibPython.svg?style=for-the-badge
-[license-url]: https://github.com/ConnorAtmos/WhoopLibPython/blob/master/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/CorniiDog/WhoopLibPython.svg?style=for-the-badge
+[contributors-url]: https://github.com/CorniiDog/WhoopLibPython/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/CorniiDog/WhoopLibPython.svg?style=for-the-badge
+[forks-url]: https://github.com/CorniiDog/WhoopLibPython/network/members
+[stars-shield]: https://img.shields.io/github/stars/CorniiDog/WhoopLibPython.svg?style=for-the-badge
+[stars-url]: https://github.com/CorniiDog/WhoopLibPython/stargazers
+[issues-shield]: https://img.shields.io/github/issues/CorniiDog/WhoopLibPython.svg?style=for-the-badge
+[issues-url]: https://github.com/CorniiDog/WhoopLibPython/issues
+[license-shield]: https://img.shields.io/github/license/CorniiDog/WhoopLibPython.svg?style=for-the-badge
+[license-url]: https://github.com/CorniiDog/WhoopLibPython/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/connor-white-38a5501a0/
 
