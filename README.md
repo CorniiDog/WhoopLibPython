@@ -17,7 +17,6 @@ The most advanced SLAM solution in VEX.
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 ## Links
 
@@ -50,6 +49,4 @@ Connor White - connor.sw.personal@gmail.com
 [issues-url]: https://github.com/CorniiDog/WhoopLibPython/issues
 [license-shield]: https://img.shields.io/github/license/CorniiDog/WhoopLibPython.svg?style=for-the-badge
 [license-url]: https://github.com/CorniiDog/WhoopLibPython/blob/master/LICENSE
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/in/connor-white-38a5501a0/
 
