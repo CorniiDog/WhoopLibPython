@@ -9,7 +9,7 @@
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 
-The most advanced SLAM solution in VEX.
+A Simple SLAM Solution.
 
 **Vision Tesseract Python Source Code**
 
