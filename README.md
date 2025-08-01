@@ -1,4 +1,4 @@
-![WhoopLib Logo](/.img/WhoopLibPythonLogo.png)
+![WhoopLib Logo](/.img/WhoopLibWhite.png)
 
 <!-- PROJECT SHIELDS -->
 <!--
@@ -21,8 +21,6 @@ The most advanced SLAM solution in VEX.
 ## Links
 
 [WhoopLib Documentation](https://CorniiDog.github.io/WhoopLib/)
-
-[WhoopLib Zero - Learn C++ From Zero](https://CorniiDog.github.io/WhoopLibZero/)
 
 [WhoopLibVEXCode Github](https://github.com/CorniiDog/WhoopLibVEXCode)
 
